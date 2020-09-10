@@ -1,5 +1,5 @@
 name: heimer
-version: '1.6.0'
+version: '1.17.0'
 summary: Heimer is a simple cross-platform mind map tool.
 description: |
   Heimer is a simple cross-platform mind map creation tool.
@@ -15,7 +15,38 @@ apps:
     desktop: usr/share/applications/heimer.desktop
     plugs: [home, desktop, desktop-legacy, removable-media, unity7, x11, wayland, opengl]
 
+plugs: # additional plug to fix mouse cursor theme
+  icon-themes:
+    interface: content
+    target: $SNAP/data-dir/icons
+    default-provider: gtk-common-themes
+
 parts:
+  desktop-qt5:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-subdir: qt
+    plugin: make
+    make-parameters: ["FLAVOR=qt5"]
+    build-packages:
+      - build-essential
+      - qtbase5-dev
+      - dpkg-dev
+    stage-packages:
+      - libxkbcommon0
+      - ttf-ubuntu-font-family
+      - dmz-cursor-theme
+      - light-themes
+      - adwaita-icon-theme
+      - gnome-themes-standard
+      - shared-mime-info
+      - libqt5gui5
+      - libgdk-pixbuf2.0-0
+      - libqt5xml5
+      - libqt5svg5 # for loading icon themes which are svg
+      - locales-all
+      - xdg-user-dirs
+      - fcitx-frontend-qt5
+      - qt5-style-plugins # for mouse cursor theme fix
   gnu-heimer:
     source: .
     plugin: cmake
@@ -23,11 +54,13 @@ parts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DBUILD_TESTS=OFF
+      - -DPACKAGE_TYPE=Snap
     build-packages:
       - qtbase5-dev
       - qttools5-dev
       - qttools5-dev-tools
     stage-packages:
+      - libqt5gui5
       - libqt5xml5
     after: [desktop-qt5]
     override-prime: |

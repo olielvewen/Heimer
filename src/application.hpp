@@ -16,7 +16,7 @@
 #ifndef APPLICATION_HPP
 #define APPLICATION_HPP
 
-#include "statemachine.hpp"
+#include "state_machine.hpp"
 
 #include <QApplication>
 #include <QColor>
@@ -26,10 +26,11 @@
 #include <memory>
 
 class EditorData;
-class EditorScene;
 class EditorView;
+class ImageManager;
 class MainWindow;
 class Mediator;
+class Node;
 class PngExportDialog;
 
 class Application : public QObject
@@ -37,7 +38,6 @@ class Application : public QObject
     Q_OBJECT
 
 public:
-
     Application(int & argc, char ** argv);
 
     ~Application();
@@ -55,10 +55,11 @@ signals:
     void backgroundColorChanged(QColor color);
 
 private:
-
     void doOpenMindMap(QString fileName);
 
     QString getFileDialogFileText() const;
+
+    QString loadRecentImagePath() const;
 
     QString loadRecentPath() const;
 
@@ -70,9 +71,17 @@ private:
 
     void saveMindMapAs();
 
+    void saveRecentImagePath(QString fileName);
+
     void saveRecentPath(QString fileName);
 
     void showBackgroundColorDialog();
+
+    void showEdgeColorDialog();
+
+    void showImageFileDialog();
+
+    void showLayoutOptimizationDialog();
 
     void showPngExportDialog();
 
@@ -85,6 +94,8 @@ private:
     QApplication m_app;
 
     QTranslator m_appTranslator;
+
+    QTranslator m_qtTranslator;
 
     QString m_mindMapFile;
 
@@ -100,9 +111,9 @@ private:
 
     std::shared_ptr<EditorData> m_editorData;
 
-    std::shared_ptr<EditorScene> m_editorScene;
-
     EditorView * m_editorView = nullptr;
+
+    Node * m_actionNode = nullptr;
 
     std::unique_ptr<PngExportDialog> m_pngExportDialog;
 };

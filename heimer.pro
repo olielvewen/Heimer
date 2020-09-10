@@ -2,10 +2,10 @@
 # (there are problems with static Qt and CMake)
 
 TEMPLATE = app
-TARGET   = heimer
+TARGET = heimer
 
-DEFINES += VERSION=\\\"1.6.0\\\"
-QMAKE_CXXFLAGS += -std=gnu++11
+DEFINES += VERSION=\\\"1.17.0\\\"
+CONFIG += c++14 lrelease embed_translations
 
 # Qt version check
 contains(QT_VERSION, ^5\\..*) {
@@ -17,74 +17,104 @@ contains(QT_VERSION, ^5\\..*) {
 
 SRC = src
 
-INCLUDEPATH += . $$SRC/contrib/SimpleLogger/src
+INCLUDEPATH += . $$SRC/contrib/SimpleLogger/src $$SRC/contrib/Argengine/src
 
 # Input
 HEADERS +=  \
-    $$SRC/aboutdlg.hpp \
+    $$SRC/about_dlg.hpp \
     $$SRC/application.hpp \
-    $$SRC/draganddropstore.hpp \
+    $$SRC/copy_paste.hpp \
     $$SRC/graph.hpp \
-    $$SRC/graphicsfactory.hpp \
+    $$SRC/graphics_factory.hpp \
+    $$SRC/grid.hpp \
     $$SRC/edge.hpp \
-    $$SRC/edgebase.hpp \
-    $$SRC/edgedot.hpp \
-    $$SRC/edgetextedit.hpp \
-    $$SRC/editordata.hpp \
-    $$SRC/editorscene.hpp \
-    $$SRC/editorview.hpp \
-    $$SRC/fileexception.hpp \
-    $$SRC/hashseed.hpp \
-    $$SRC/pngexportdialog.hpp \
+    $$SRC/edge_context_menu.hpp \
+    $$SRC/edge_dot.hpp \
+    $$SRC/edge_text_edit.hpp \
+    $$SRC/editor_data.hpp \
+    $$SRC/editor_scene.hpp \
+    $$SRC/editor_view.hpp \
+    $$SRC/file_exception.hpp \
+    $$SRC/hash_seed.hpp \
+    $$SRC/image.hpp \
+    $$SRC/image_manager.hpp \
+    $$SRC/png_export_dialog.hpp \
     $$SRC/layers.hpp \
-    $$SRC/mainwindow.hpp \
+    $$SRC/layout_optimization_dialog.hpp \
+    $$SRC/layout_optimizer.hpp \
+    $$SRC/magic_zoom.hpp \
+    $$SRC/main_context_menu.hpp \
+    $$SRC/main_window.hpp \
     $$SRC/mediator.hpp \
-    $$SRC/mindmapdata.hpp \
-    $$SRC/mindmapdatabase.hpp \
+    $$SRC/mind_map_data.hpp \
+    $$SRC/mind_map_data_base.hpp \
+    $$SRC/mouse_action.hpp \
     $$SRC/node.hpp \
-    $$SRC/nodebase.hpp \
-    $$SRC/nodehandle.hpp \
+    $$SRC/node_handle.hpp \
     $$SRC/reader.hpp \
+    $$SRC/recent_files_manager.hpp \
+    $$SRC/recent_files_menu.hpp \
+    $$SRC/selection_group.hpp \
     $$SRC/serializer.hpp \
-    $$SRC/statemachine.hpp \
-    $$SRC/textedit.hpp \
-    $$SRC/undostack.hpp \
+    $$SRC/state_machine.hpp \
+    $$SRC/text_edit.hpp \
+    $$SRC/undo_stack.hpp \
+    $$SRC/whats_new_dlg.hpp \
     $$SRC/writer.hpp \
+    $$SRC/contrib/Argengine/src/argengine.hpp \
     $$SRC/contrib/SimpleLogger/src/simple_logger.hpp \
 
 SOURCES += \
-    $$SRC/aboutdlg.cpp \
+    $$SRC/about_dlg.cpp \
     $$SRC/application.cpp \
-    $$SRC/draganddropstore.cpp \
+    $$SRC/copy_paste.cpp \
     $$SRC/graph.cpp \
-    $$SRC/graphicsfactory.cpp \
+    $$SRC/graphics_factory.cpp \
+    $$SRC/grid.cpp \
     $$SRC/edge.cpp \
-    $$SRC/edgebase.cpp \
-    $$SRC/edgedot.cpp \
-    $$SRC/edgetextedit.cpp \
-    $$SRC/editordata.cpp \
-    $$SRC/editorscene.cpp \
-    $$SRC/editorview.cpp \
-    $$SRC/hashseed.cpp \
-    $$SRC/pngexportdialog.cpp \
+    $$SRC/edge_context_menu.cpp \
+    $$SRC/edge_dot.cpp \
+    $$SRC/edge_text_edit.cpp \
+    $$SRC/editor_data.cpp \
+    $$SRC/editor_scene.cpp \
+    $$SRC/editor_view.cpp \
+    $$SRC/hash_seed.cpp \
+    $$SRC/image.cpp \
+    $$SRC/image_manager.cpp \
+    $$SRC/png_export_dialog.cpp \
+    $$SRC/layout_optimization_dialog.cpp \
+    $$SRC/layout_optimizer.cpp \
+    $$SRC/magic_zoom.cpp \
     $$SRC/main.cpp \
-    $$SRC/mainwindow.cpp \
+    $$SRC/main_context_menu.cpp \
+    $$SRC/main_window.cpp \
     $$SRC/mediator.cpp \
-    $$SRC/mindmapdata.cpp \
-    $$SRC/mindmapdatabase.cpp \
+    $$SRC/mind_map_data.cpp \
+    $$SRC/mind_map_data_base.cpp \
+    $$SRC/mouse_action.cpp \
     $$SRC/node.cpp \
-    $$SRC/nodebase.cpp \
-    $$SRC/nodehandle.cpp \
+    $$SRC/node_handle.cpp \
     $$SRC/reader.cpp \
+    $$SRC/recent_files_manager.cpp \
+    $$SRC/recent_files_menu.cpp \
+    $$SRC/selection_group.cpp \
     $$SRC/serializer.cpp \
-    $$SRC/statemachine.cpp \
-    $$SRC/textedit.cpp \
-    $$SRC/undostack.cpp \
+    $$SRC/state_machine.cpp \
+    $$SRC/text_edit.cpp \
+    $$SRC/undo_stack.cpp \
+    $$SRC/whats_new_dlg.cpp \
     $$SRC/writer.cpp \
+    $$SRC/contrib/Argengine/src/argengine.cpp \
     $$SRC/contrib/SimpleLogger/src/simple_logger.cpp \
 
+QM_FILES_RESOURCE_PREFIX = /translations
 
-RESOURCES += data/icons/icons.qrc data/images/images.qrc data/translations/translations.qrc
+TRANSLATIONS += \ 
+$$SRC/translations/heimer_fi.ts \ 
+$$SRC/translations/heimer_fr.ts \ 
+$$SRC/translations/heimer_it.ts 
+
+RESOURCES += meta.qrc data/icons/icons.qrc data/images/images.qrc
 RC_FILE = data/icons/WindowsHeimer.rc
 
 data.files = AUTHORS CHANGELOG COPYING README

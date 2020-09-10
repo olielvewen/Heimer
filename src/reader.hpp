@@ -18,11 +18,11 @@
 
 #include <QDomDocument>
 
-#include "fileexception.hpp"
+#include "file_exception.hpp"
 
 namespace Reader {
 
-    QDomDocument readFromFile(QString filePath);
+QDomDocument readFromFile(QString filePath);
 
 }
 

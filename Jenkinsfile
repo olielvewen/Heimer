@@ -1,10 +1,10 @@
 pipeline {
-    agent any
+    agent none
     stages {
         stage('CMake Debug build and unit tests') {
             agent {
                 docker {
-                    image 'juzzlin/qt5:18.04'
+                    image 'juzzlin/qt5-18.04:latest'
                     args '--privileged -t -v $WORKSPACE:/heimer'
                 }
             }
@@ -17,7 +17,7 @@ pipeline {
         stage('QMake build') {
             agent {
                 docker {
-                    image 'juzzlin/qt5:18.04'
+                    image 'juzzlin/qt5-18.04:latest'
                     args '--privileged -t -v $WORKSPACE:/heimer'
                 }
             }
@@ -29,48 +29,66 @@ pipeline {
         stage('Debian package / Ubuntu 16.04') {
             agent {
                 docker {
-                    image 'juzzlin/qt5:16.04'
+                    image 'juzzlin/qt5-16.04:latest'
                     args '--privileged -t -v $WORKSPACE:/heimer'
                 }
             }
             steps {
-                sh "mkdir -p build"
-                sh "cd build && cmake -D DISTRO_VERSION=Ubuntu-16.04 -D CMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF .. && cmake --build . --target all -- -j3"
-                sh "cd build && cpack -G DEB"
+                sh "mkdir -p build-deb-ubuntu-16.04"
+                sh "cd build-deb-ubuntu-16.04 && cmake -D DISTRO_VERSION=Ubuntu-16.04 -D CMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF -D PACKAGE_TYPE=Deb .. && cmake --build . --target all -- -j3"
+                sh "cd build-deb-ubuntu-16.04 && cpack -G DEB"
             }
             post {
                 always {
-                    archiveArtifacts artifacts: 'build/*.deb', fingerprint: true
+                    archiveArtifacts artifacts: 'build-deb-ubuntu-16.04/*.deb', fingerprint: true
                 }
             }
         }
         stage('Debian package / Ubuntu 18.04') {
             agent {
                 docker {
-                    image 'juzzlin/qt5:18.04'
+                    image 'juzzlin/qt5-18.04:latest'
                     args '--privileged -t -v $WORKSPACE:/heimer'
                 }
             }
             steps {
-                sh "mkdir -p build"
-                sh "cd build && cmake -D DISTRO_VERSION=Ubuntu-18.04  -D CMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF .. && cmake --build . --target all -- -j3"
-                sh "cd build && cpack -G DEB"
+                sh "mkdir -p build-deb-ubuntu-18.04"
+                sh "cd build-deb-ubuntu-18.04 && cmake -D DISTRO_VERSION=Ubuntu-18.04  -D CMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF -D PACKAGE_TYPE=Deb .. && cmake --build . --target all -- -j3"
+                sh "cd build-deb-ubuntu-18.04 && cpack -G DEB"
             }
             post {
                 always {
-                    archiveArtifacts artifacts: 'build/*.deb', fingerprint: true
+                    archiveArtifacts artifacts: 'build-deb-ubuntu-18.04/*.deb', fingerprint: true
                 }
             }
         }
-        stage('NSIS installer') {
+        stage('Debian package / Ubuntu 20.04') {
             agent {
                 docker {
-                    image 'juzzlin/mxe-qt5:latest'
+                    image 'juzzlin/qt5-20.04:latest'
                     args '--privileged -t -v $WORKSPACE:/heimer'
                 }
             }
             steps {
-                sh "./scripts/buildWindowsInstaller.sh"
+                sh "mkdir -p build-deb-ubuntu-20.04"
+                sh "cd build-deb-ubuntu-20.04 && cmake -D DISTRO_VERSION=Ubuntu-20.04  -D CMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF -D PACKAGE_TYPE=Deb .. && cmake --build . --target all -- -j3"
+                sh "cd build-deb-ubuntu-20.04 && cpack -G DEB"
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'build-deb-ubuntu-20.04/*.deb', fingerprint: true
+                }
+            }
+        }
+        stage('Build NSIS installer') {
+            agent {
+                docker {
+                    image 'juzzlin/mxe-qt5-18.04:latest'
+                    args '--privileged -t -v $WORKSPACE:/heimer'
+                }
+            }
+            steps {
+                sh "./scripts/build-windows-installer"
             }
             post {
                 always {

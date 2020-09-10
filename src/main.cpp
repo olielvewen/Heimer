@@ -18,13 +18,12 @@
 
 #include "application.hpp"
 #include "constants.hpp"
-#include "hashseed.hpp"
-#include "userexception.hpp"
+#include "hash_seed.hpp"
 #include "simple_logger.hpp"
+#include "user_exception.hpp"
 
 #include <cstdlib>
 #include <iostream>
-#include <memory>
 
 #include <QDir>
 
@@ -32,10 +31,21 @@ static void initLogger()
 {
     using juzzlin::L;
 
-    const QString logPath{QDir::tempPath() + QDir::separator() + "heimer.log"};
+    const QString logPath { QDir::tempPath() + QDir::separator() + "heimer.log" };
     L::init(logPath.toStdString().c_str());
     L::enableEchoMode(true);
-    L::enableDateTime(true);
+    L::setTimestampMode(L::TimestampMode::DateTime, " ");
+    const std::map<L::Level, std::string> symbols = {
+        { L::Level::Debug, "D" },
+        { L::Level::Error, "E" },
+        { L::Level::Fatal, "F" },
+        { L::Level::Info, "I" },
+        { L::Level::Trace, "T" },
+        { L::Level::Warning, "W" }
+    };
+    for (auto && symbol : symbols) {
+        L::setLevelSymbol(symbol.first, "[" + symbol.second + "]");
+    }
 
 #if defined(NDEBUG) or defined(QT_NO_DEBUG)
     L::setLoggingLevel(L::Level::Info);
@@ -58,25 +68,13 @@ int main(int argc, char ** argv)
     QSettings::setDefaultFormat(QSettings::IniFormat);
 #endif
 
-    std::unique_ptr<Application> app;
-
-    try
-    {
+    try {
         initLogger();
-
-        app.reset(new Application(argc, argv));
-
-        return app->run();
-    }
-    catch (std::exception & e)
-    {
-        if (!dynamic_cast<UserException *>(&e))
-        {
+        return Application(argc, argv).run();
+    } catch (std::exception & e) {
+        if (!dynamic_cast<UserException *>(&e)) {
             std::cerr << e.what() << std::endl;
         }
-
-        app.reset();
-
         return EXIT_FAILURE;
     }
 }

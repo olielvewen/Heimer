@@ -16,66 +16,16 @@
 #ifndef SERIALIZER_HPP
 #define SERIALIZER_HPP
 
-#include "mindmapdata.hpp"
+#include "mind_map_data.hpp"
 
 #include <QDomDocument>
 
 namespace Serializer {
 
-    struct DataKeywords
-    {
-        struct Design
-        {
-            static constexpr auto DESIGN = "design";
+MindMapDataPtr fromXml(QDomDocument document);
 
-            static constexpr auto APPLICATION_VERSION = "version";
+QDomDocument toXml(MindMapData & mindMapData);
 
-            static constexpr auto COLOR = "color";
-
-            static constexpr auto EDGE_THICKNESS = "edge-width";
-
-            static constexpr auto GRAPH = "graph";
-
-            static constexpr auto TEXT_SIZE = "text-size";
-
-            // Used for Design and Node
-            struct Color
-            {
-                static constexpr auto R = "r";
-                static constexpr auto G = "g";
-                static constexpr auto B = "b";
-            };
-
-            struct Graph
-            {
-                static constexpr auto NODE = "node";
-
-                struct Node
-                {
-                    static constexpr auto COLOR = "color";
-                    static constexpr auto INDEX = "index";
-                    static constexpr auto TEXT = "text";
-                    static constexpr auto TEXT_COLOR = "text-color";
-                    static constexpr auto X = "x";
-                    static constexpr auto Y = "y";
-                    static constexpr auto W = "w";
-                    static constexpr auto H = "h";
-                };
-
-                static constexpr auto EDGE = "edge";
-
-                struct Edge
-                {
-                    static constexpr auto INDEX0 = "index0";
-                    static constexpr auto INDEX1 = "index1";
-                };
-            };
-        };
-    };
-
-    MindMapDataPtr fromXml(QDomDocument document);
-
-    QDomDocument toXml(MindMapData & mindMapData);
-}
+} // namespace Serializer
 
 #endif // SERIALIZER_HPP

@@ -20,12 +20,14 @@
 #include <QPointF>
 #include <QString>
 
+#include "mind_map_data.hpp"
 #include "node.hpp"
 
-class DragAndDropStore;
+class MouseAction;
 class EditorData;
 class EditorScene;
 class EditorView;
+class Graph;
 class MainWindow;
 class QGraphicsItem;
 
@@ -39,7 +41,6 @@ class Mediator : public QObject
     Q_OBJECT
 
 public:
-
     explicit Mediator(MainWindow & mainWindow);
 
     ~Mediator();
@@ -52,19 +53,25 @@ public:
 
     bool canBeSaved() const;
 
-    void clearSelection();
+    void clearSelectedNode();
+
+    void clearSelectionGroup();
 
     void connectEdgeToUndoMechanism(EdgePtr edge);
 
     void connectNodeToUndoMechanism(NodePtr node);
 
+    void connectNodeToImageManager(NodePtr node);
+
     // Create a new node and add edge to the source (parent) node
-    NodeBasePtr createAndAddNode(int sourceNodeIndex, QPointF pos);
+    NodePtr createAndAddNode(int sourceNodeIndex, QPointF pos);
 
     // Create a new floating node
-    NodeBasePtr createAndAddNode(QPointF pos);
+    NodePtr createAndAddNode(QPointF pos);
 
-    DragAndDropStore & dadStore();
+    MouseAction & mouseAction();
+
+    void deleteEdge(Edge & edge);
 
     void deleteNode(Node & node);
 
@@ -72,7 +79,7 @@ public:
 
     NodePtr getBestOverlapNode(const Node & source);
 
-    NodeBasePtr getNodeByIndex(int index);
+    NodePtr getNodeByIndex(int index);
 
     bool hasNodes() const;
 
@@ -82,6 +89,8 @@ public:
 
     bool isInBetween(Node & node);
 
+    bool isInSelectionGroup(Node & node);
+
     bool isLeafNode(Node & node);
 
     bool isUndoable() const;
@@ -90,7 +99,13 @@ public:
 
     bool isModified() const;
 
-    int nodeCount() const;
+    void moveSelectionGroup(Node & reference, QPointF location);
+
+    size_t nodeCount() const;
+
+    NodePtr pasteNodeAt(Node & source, QPointF pos);
+
+    MindMapDataPtr mindMapData() const;
 
     bool openMindMap(QString fileName);
 
@@ -104,23 +119,29 @@ public:
 
     QSize sceneRectSize() const;
 
+    Edge * selectedEdge() const;
+
     Node * selectedNode() const;
+
+    size_t selectionGroupSize() const;
 
     void setEditorData(std::shared_ptr<EditorData> editorData);
 
-    void setEditorScene(std::shared_ptr<EditorScene> editorScene);
-
     void setEditorView(EditorView & editorView);
+
+    void setRectagleSelection(QRectF rect);
+
+    void setSelectedEdge(Edge * edge);
 
     void setSelectedNode(Node * node);
 
     void setupMindMapAfterUndoOrRedo();
 
+    void toggleNodeInSelectionGroup(Node & node);
+
     void undo();
 
 public slots:
-
-    void clearScene();
 
     void enableUndo(bool enable);
 
@@ -130,11 +151,17 @@ public slots:
 
     void setBackgroundColor(QColor color);
 
+    void setCornerRadius(int value);
+
+    void setEdgeColor(QColor color);
+
     void setEdgeWidth(double value);
 
     void setTextSize(int textSize);
 
     QSize zoomForExport();
+
+    void zoomToFit();
 
 private slots:
 
@@ -142,23 +169,22 @@ private slots:
 
     void zoomOut();
 
-    void zoomToFit();
-
 signals:
 
     void exportFinished(bool success);
 
 private:
-
     void addExistingGraphToScene();
 
     double calculateNodeOverlapScore(const Node & node1, const Node & node2) const;
 
     void connectGraphToUndoMechanism();
 
+    void connectGraphToImageManager();
+
     std::shared_ptr<EditorData> m_editorData;
 
-    std::shared_ptr<EditorScene> m_editorScene;
+    std::unique_ptr<EditorScene> m_editorScene;
 
     EditorView * m_editorView = nullptr;
 

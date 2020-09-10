@@ -16,14 +16,13 @@
 #ifndef EDGE_HPP
 #define EDGE_HPP
 
-#include <QBrush>
 #include <QGraphicsLineItem>
 #include <QTimer>
 
 #include <map>
 #include <memory>
 
-#include "edgebase.hpp"
+#include "edge_point.hpp"
 
 class EdgeDot;
 class EdgeTextEdit;
@@ -32,49 +31,94 @@ class QGraphicsEllipseItem;
 class QPropertyAnimation;
 
 //! A graphic representation of a graph edge between nodes.
-class Edge : public QObject, public QGraphicsLineItem, public EdgeBase
+class Edge : public QObject, public QGraphicsLineItem
 {
     Q_OBJECT
 
 public:
+    enum class ArrowMode
+    {
+        Single = 0,
+        Double = 1,
+        Hidden = 2
+    };
 
     Edge(Node & sourceNode, Node & targetNode, bool enableAnimations = true, bool enableLabel = true);
 
-    virtual ~Edge();
+    virtual ~Edge() override;
 
     Node & sourceNode() const;
 
     Node & targetNode() const;
 
+    void setSourceNode(Node & sourceNode);
+
+    void setTargetNode(Node & targetNode);
+
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent * event) override;
 
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent * event) override;
+
+    QString text() const;
+
+    ArrowMode arrowMode() const;
+
+    bool reversed() const;
 
 public slots:
 
     void updateLine();
 
-    virtual void setWidth(double width) override;
+    void setArrowMode(ArrowMode arrowMode);
 
-    virtual void setText(const QString & text) override;
+    void setColor(const QColor & color);
 
-    virtual void setTextSize(int textSize) override;
+    void setWidth(double width);
+
+    void setText(const QString & text);
+
+    void setTextSize(int textSize);
+
+    void setReversed(bool reversed);
+
+    void setSelected(bool selected);
 
 signals:
 
     void undoPointRequested();
 
 private:
+    QPen getPen() const;
 
     void initDots();
+
+    void setArrowHeadPen(const QPen & pen);
 
     void setLabelVisible(bool visible);
 
     void updateArrowhead();
 
-    void updateDots(const std::pair<QPointF, QPointF> & nearestPoints);
+    void updateDots();
 
     void updateLabel();
+
+    Node * m_sourceNode = nullptr;
+
+    Node * m_targetNode = nullptr;
+
+    QString m_text;
+
+    double m_width = 2;
+
+    int m_textSize = 11; // Not sure if we should set yet another default value here..
+
+    QColor m_color;
+
+    bool m_reversed = false;
+
+    bool m_selected = false;
+
+    ArrowMode m_arrowMode = ArrowMode::Single;
 
     bool m_enableAnimations;
 
@@ -84,21 +128,25 @@ private:
 
     EdgeDot * m_targetDot;
 
+    QPointF m_previousRelativeSourcePos;
+
+    QPointF m_previousRelativeTargetPos;
+
     EdgeTextEdit * m_label;
 
-    QGraphicsLineItem * m_arrowheadL;
+    QGraphicsLineItem * m_arrowheadL0;
 
-    QGraphicsLineItem * m_arrowheadR;
+    QGraphicsLineItem * m_arrowheadR0;
+
+    QGraphicsLineItem * m_arrowheadL1;
+
+    QGraphicsLineItem * m_arrowheadR1;
 
     QPropertyAnimation * m_sourceDotSizeAnimation;
 
     QPropertyAnimation * m_targetDotSizeAnimation;
 
     QTimer m_labelVisibilityTimer;
-
-    double m_width = 1;
-
-    QBrush m_brush = QBrush(QColor(0, 0, 0, 200));
 };
 
 using EdgePtr = std::shared_ptr<Edge>;

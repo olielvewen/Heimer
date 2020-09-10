@@ -16,11 +16,11 @@
 #include "edge.hpp"
 
 #include "constants.hpp"
-#include "edgedot.hpp"
-#include "graphicsfactory.hpp"
+#include "edge_dot.hpp"
+#include "edge_text_edit.hpp"
+#include "graphics_factory.hpp"
 #include "layers.hpp"
 #include "node.hpp"
-#include "edgetextedit.hpp"
 
 #include "simple_logger.hpp"
 
@@ -31,20 +31,25 @@
 #include <QTimer>
 #include <QVector2D>
 
+#include <QtMath>
+
 #include <cassert>
 #include <cmath>
 
 Edge::Edge(Node & sourceNode, Node & targetNode, bool enableAnimations, bool enableLabel)
-    : EdgeBase(sourceNode, targetNode)
-    , m_enableAnimations(enableAnimations)
-    , m_enableLabel(enableLabel)
-    , m_sourceDot(enableAnimations ? new EdgeDot(this) : nullptr)
-    , m_targetDot(enableAnimations ? new EdgeDot(this) : nullptr)
-    , m_label(enableLabel ? new EdgeTextEdit(this) : nullptr)
-    , m_arrowheadL(new QGraphicsLineItem(this))
-    , m_arrowheadR(new QGraphicsLineItem(this))
-    , m_sourceDotSizeAnimation(enableAnimations ? new QPropertyAnimation(m_sourceDot, "scale", this) : nullptr)
-    , m_targetDotSizeAnimation(enableAnimations ? new QPropertyAnimation(m_targetDot, "scale", this) : nullptr)
+  : m_sourceNode(&sourceNode)
+  , m_targetNode(&targetNode)
+  , m_enableAnimations(enableAnimations)
+  , m_enableLabel(enableLabel)
+  , m_sourceDot(enableAnimations ? new EdgeDot(this) : nullptr)
+  , m_targetDot(enableAnimations ? new EdgeDot(this) : nullptr)
+  , m_label(enableLabel ? new EdgeTextEdit(this) : nullptr)
+  , m_arrowheadL0(new QGraphicsLineItem(this))
+  , m_arrowheadR0(new QGraphicsLineItem(this))
+  , m_arrowheadL1(new QGraphicsLineItem(this))
+  , m_arrowheadR1(new QGraphicsLineItem(this))
+  , m_sourceDotSizeAnimation(enableAnimations ? new QPropertyAnimation(m_sourceDot, "scale", this) : nullptr)
+  , m_targetDotSizeAnimation(enableAnimations ? new QPropertyAnimation(m_targetDot, "scale", this) : nullptr)
 {
     setAcceptHoverEvents(true && enableAnimations);
 
@@ -54,14 +59,13 @@ Edge::Edge(Node & sourceNode, Node & targetNode, bool enableAnimations, bool ena
 
     initDots();
 
-    if (m_enableLabel)
-    {
+    if (m_enableLabel) {
         m_label->setZValue(static_cast<int>(Layers::EdgeLabel));
         m_label->setBackgroundColor(Constants::Edge::LABEL_COLOR);
 
-        connect(m_label, &TextEdit::textChanged, [=] (const QString & text) {
+        connect(m_label, &TextEdit::textChanged, [=](const QString & text) {
             updateLabel();
-            EdgeBase::setText(text);
+            m_text = text;
         });
 
         connect(m_label, &TextEdit::undoPointRequested, this, &Edge::undoPointRequested);
@@ -69,7 +73,7 @@ Edge::Edge(Node & sourceNode, Node & targetNode, bool enableAnimations, bool ena
         m_labelVisibilityTimer.setSingleShot(true);
         m_labelVisibilityTimer.setInterval(Constants::Edge::LABEL_DURATION);
 
-        connect(&m_labelVisibilityTimer, &QTimer::timeout, [=] () {
+        connect(&m_labelVisibilityTimer, &QTimer::timeout, [=]() {
             setLabelVisible(false);
         });
     }
@@ -91,15 +95,21 @@ void Edge::hoverLeaveEvent(QGraphicsSceneHoverEvent * event)
     QGraphicsItem::hoverLeaveEvent(event);
 }
 
+QPen Edge::getPen() const
+{
+    return QPen { QBrush { QColor { m_color.red(), m_color.green(), m_color.blue(), 200 } }, m_width };
+}
+
 void Edge::initDots()
 {
-    if (m_enableAnimations)
-    {
+    if (m_enableAnimations) {
         m_sourceDot->setPen(QPen(Constants::Edge::DOT_COLOR));
         m_sourceDot->setBrush(QBrush(Constants::Edge::DOT_COLOR));
+        m_sourceDot->setZValue(zValue() + 10);
 
         m_targetDot->setPen(QPen(Constants::Edge::DOT_COLOR));
         m_targetDot->setBrush(QBrush(Constants::Edge::DOT_COLOR));
+        m_targetDot->setZValue(zValue() + 10);
 
         m_sourceDotSizeAnimation->setDuration(Constants::Edge::DOT_DURATION);
         m_sourceDotSizeAnimation->setStartValue(1.0);
@@ -116,6 +126,18 @@ void Edge::initDots()
     }
 }
 
+void Edge::setArrowHeadPen(const QPen & pen)
+{
+    m_arrowheadL0->setPen(pen);
+    m_arrowheadL0->update();
+    m_arrowheadR0->setPen(pen);
+    m_arrowheadR0->update();
+    m_arrowheadL1->setPen(pen);
+    m_arrowheadL1->update();
+    m_arrowheadR1->setPen(pen);
+    m_arrowheadR1->update();
+}
+
 void Edge::setLabelVisible(bool visible)
 {
     m_label->setVisible(visible);
@@ -124,20 +146,34 @@ void Edge::setLabelVisible(bool visible)
 void Edge::setWidth(double width)
 {
     m_width = width;
-    setPen(QPen(m_brush, width));
-    m_arrowheadL->setPen(pen());
-    m_arrowheadL->update();
-    m_arrowheadR->setPen(pen());
-    m_arrowheadR->update();
+
+    setPen(getPen());
+    setArrowHeadPen(pen());
+    updateLine();
+}
+
+void Edge::setArrowMode(ArrowMode arrowMode)
+{
+    m_arrowMode = arrowMode;
+#ifndef HEIMER_UNIT_TEST
+    updateLine();
+#endif
+}
+
+void Edge::setColor(const QColor & color)
+{
+    m_color = color;
+
+    setPen(getPen());
+    setArrowHeadPen(pen());
     updateLine();
 }
 
 void Edge::setText(const QString & text)
 {
-    EdgeBase::setText(text);
+    m_text = text;
 #ifndef HEIMER_UNIT_TEST
-    if (m_label)
-    {
+    if (m_label) {
         m_label->setText(text);
     }
     setLabelVisible(!text.isEmpty());
@@ -146,105 +182,187 @@ void Edge::setText(const QString & text)
 
 void Edge::setTextSize(int textSize)
 {
-    if (m_label)
-    {
+    if (m_label) {
         m_label->setTextSize(textSize);
     }
 }
 
+void Edge::setReversed(bool reversed)
+{
+    m_reversed = reversed;
+
+    updateArrowhead();
+}
+
+void Edge::setSelected(bool selected)
+{
+    m_selected = selected;
+    setGraphicsEffect(GraphicsFactory::createDropShadowEffect(selected));
+    update();
+}
+
 Node & Edge::sourceNode() const
 {
-    auto node = dynamic_cast<Node *>(&sourceNodeBase());
-    assert(node);
-    return *node;
+    return *m_sourceNode;
 }
 
 Node & Edge::targetNode() const
 {
-    auto node = dynamic_cast<Node *>(&targetNodeBase());
-    assert(node);
-    return *node;
+    return *m_targetNode;
 }
 
 void Edge::updateArrowhead()
 {
-    QLineF line;
-    double angle = (-this->line().angle() + Constants::Edge::ARROW_OPENING) / 180 * M_PI;
-    line.setP1(this->line().p2());
-    line.setP2(this->line().p2() + QPointF(std::cos(angle), std::sin(angle)) * Constants::Edge::ARROW_LENGTH);
-    m_arrowheadL->setLine(line);
+    const auto point0 = m_reversed ? this->line().p1() : this->line().p2();
+    const auto angle0 = m_reversed ? -this->line().angle() + 180 : -this->line().angle();
+    const auto point1 = m_reversed ? this->line().p2() : this->line().p1();
+    const auto angle1 = m_reversed ? -this->line().angle() : -this->line().angle() + 180;
 
-    angle = (-this->line().angle() - Constants::Edge::ARROW_OPENING) / 180 * M_PI;
-    line.setP1(this->line().p2());
-    line.setP2(this->line().p2() + QPointF(std::cos(angle), std::sin(angle)) * Constants::Edge::ARROW_LENGTH);
-    m_arrowheadR->setLine(line);
+    QLineF lineL0;
+    QLineF lineR0;
+    QLineF lineL1;
+    QLineF lineR1;
+
+    switch (m_arrowMode) {
+    case ArrowMode::Single: {
+        lineL0.setP1(point0);
+        const auto angleL = qDegreesToRadians(angle0 + Constants::Edge::ARROW_OPENING);
+        lineL0.setP2(point0 + QPointF(std::cos(angleL), std::sin(angleL)) * Constants::Edge::ARROW_LENGTH);
+        lineR0.setP1(point0);
+        const auto angleR = qDegreesToRadians(angle0 - Constants::Edge::ARROW_OPENING);
+        lineR0.setP2(point0 + QPointF(std::cos(angleR), std::sin(angleR)) * Constants::Edge::ARROW_LENGTH);
+        m_arrowheadL0->setLine(lineL0);
+        m_arrowheadR0->setLine(lineR0);
+        m_arrowheadL0->show();
+        m_arrowheadR0->show();
+        m_arrowheadL1->hide();
+        m_arrowheadR1->hide();
+        break;
+    }
+    case ArrowMode::Double: {
+        lineL0.setP1(point0);
+        const auto angleL0 = qDegreesToRadians(angle0 + Constants::Edge::ARROW_OPENING);
+        lineL0.setP2(point0 + QPointF(std::cos(angleL0), std::sin(angleL0)) * Constants::Edge::ARROW_LENGTH);
+        lineR0.setP1(point0);
+        const auto angleR0 = qDegreesToRadians(angle0 - Constants::Edge::ARROW_OPENING);
+        lineR0.setP2(point0 + QPointF(std::cos(angleR0), std::sin(angleR0)) * Constants::Edge::ARROW_LENGTH);
+        lineL1.setP1(point1);
+        m_arrowheadL0->setLine(lineL0);
+        m_arrowheadR0->setLine(lineR0);
+        m_arrowheadL0->show();
+        m_arrowheadR0->show();
+        const auto angleL1 = qDegreesToRadians(angle1 + Constants::Edge::ARROW_OPENING);
+        lineL1.setP2(point1 + QPointF(std::cos(angleL1), std::sin(angleL1)) * Constants::Edge::ARROW_LENGTH);
+        lineR1.setP1(point1);
+        const auto angleR1 = qDegreesToRadians(angle1 - Constants::Edge::ARROW_OPENING);
+        lineR1.setP2(point1 + QPointF(std::cos(angleR1), std::sin(angleR1)) * Constants::Edge::ARROW_LENGTH);
+        m_arrowheadL1->setLine(lineL1);
+        m_arrowheadR1->setLine(lineR1);
+        m_arrowheadL1->show();
+        m_arrowheadR1->show();
+        break;
+    }
+    case ArrowMode::Hidden:
+        m_arrowheadL0->hide();
+        m_arrowheadR0->hide();
+        m_arrowheadL1->hide();
+        m_arrowheadR1->hide();
+        break;
+    }
 }
 
-void Edge::updateDots(const std::pair<QPointF, QPointF> & nearestPoints)
+void Edge::updateDots()
 {
-    if (m_enableAnimations)
-    {
-        if (m_sourceDot->pos() != nearestPoints.first)
-        {
-            m_sourceDot->setPos(nearestPoints.first);
-
-            // Re-parent to source node due to Z-ordering issues
-            m_sourceDot->setParentItem(&sourceNode());
-
+    if (m_enableAnimations) {
+        // Trigger new animation if relative connection location has changed
+        const auto newRelativeSourcePos = line().p1() - sourceNode().pos();
+        if (m_previousRelativeSourcePos != newRelativeSourcePos) {
+            m_previousRelativeSourcePos = newRelativeSourcePos;
             m_sourceDotSizeAnimation->stop();
             m_sourceDotSizeAnimation->start();
         }
 
-        if (m_targetDot->pos() != nearestPoints.second)
-        {
-            m_targetDot->setPos(nearestPoints.second);
+        // Update location of possibly active animation
+        m_sourceDot->setPos(line().p1());
 
-            // Re-parent to target node due to Z-ordering issues
-            m_targetDot->setParentItem(&targetNode());
-
+        // Trigger new animation if relative connection location has changed
+        const auto newRelativeTargetPos = line().p2() - targetNode().pos();
+        if (m_previousRelativeTargetPos != newRelativeTargetPos) {
+            m_previousRelativeTargetPos = newRelativeTargetPos;
             m_targetDotSizeAnimation->stop();
             m_targetDotSizeAnimation->start();
         }
+
+        // Update location of possibly active animation
+        m_targetDot->setPos(line().p2());
     }
 }
 
 void Edge::updateLabel()
 {
-    if (m_label)
-    {
+    if (m_label) {
         m_label->setPos((line().p1() + line().p2()) * 0.5 - QPointF(m_label->boundingRect().width(), m_label->boundingRect().height()) * 0.5);
     }
+}
+
+void Edge::setTargetNode(Node & targetNode)
+{
+    m_targetNode = &targetNode;
+}
+
+void Edge::setSourceNode(Node & sourceNode)
+{
+    m_sourceNode = &sourceNode;
+}
+
+bool Edge::reversed() const
+{
+    return m_reversed;
+}
+
+Edge::ArrowMode Edge::arrowMode() const
+{
+    return m_arrowMode;
+}
+
+QString Edge::text() const
+{
+    return m_text;
 }
 
 void Edge::updateLine()
 {
     const auto nearestPoints = Node::getNearestEdgePoints(sourceNode(), targetNode());
-    const auto p1 = nearestPoints.first + sourceNode().pos();
-    const auto p2 = nearestPoints.second + targetNode().pos();
 
-    QVector2D direction(p2 - p1);
-    direction.normalize();
+    const auto p1 = nearestPoints.first.location + sourceNode().pos();
+    QVector2D direction1(sourceNode().pos() - p1);
+    direction1.normalize();
 
-    setLine(QLineF(p1, p2 - (direction * m_width).toPointF() * 0.5));
-    updateDots(nearestPoints);
+    const auto p2 = nearestPoints.second.location + targetNode().pos();
+    QVector2D direction2(targetNode().pos() - p2);
+    direction2.normalize();
+
+    setLine(QLineF(
+      p1 + (nearestPoints.first.isCorner ? Constants::Edge::CORNER_RADIUS_SCALE * (direction1 * sourceNode().cornerRadius()).toPointF() : QPointF { 0, 0 }),
+      p2 + (nearestPoints.second.isCorner ? Constants::Edge::CORNER_RADIUS_SCALE * (direction2 * targetNode().cornerRadius()).toPointF() : QPointF { 0, 0 }) - //
+        (direction2 * static_cast<float>(m_width)).toPointF() * Constants::Edge::WIDTH_SCALE));
+
+    updateDots();
     updateLabel();
     updateArrowhead();
 }
 
 Edge::~Edge()
 {
-    if (m_enableAnimations)
-    {
+#ifndef HEIMER_UNIT_TEST
+    juzzlin::L().debug() << "Deleting edge " << sourceNode().index() << " -> " << targetNode().index();
+
+    if (m_enableAnimations) {
         m_sourceDotSizeAnimation->stop();
         m_targetDotSizeAnimation->stop();
-        delete m_sourceDot;
-        delete m_targetDot;
     }
 
     sourceNode().removeGraphicsEdge(*this);
     targetNode().removeGraphicsEdge(*this);
-
-    // Needed to remove glitches from possibly running dot animations
-    sourceNode().update();
-    targetNode().update();
+#endif
 }

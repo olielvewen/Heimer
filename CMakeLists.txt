@@ -19,10 +19,10 @@ if(POLICY CMP0071)
     cmake_policy(SET CMP0071 NEW)
 endif()
 
-# Global game version
-set(VERSION_MAJOR "1")
-set(VERSION_MINOR "6")
-set(VERSION_PATCH "0")
+# Global version
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 17)
+set(VERSION_PATCH 0)
 set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 
 # Some common CPack variables
@@ -49,13 +49,18 @@ if(NOT CMAKE_BUILD_TYPE)
 MinSizeRel." FORCE)
 endif()
 
+# Package type info shown in the About dialog
+if(PACKAGE_TYPE)
+    add_definitions(-DPACKAGE_TYPE="${PACKAGE_TYPE}")
+endif()
+
 if(UNIX)
     include("InstallLinux.cmake")
 elseif(WIN32)
     include("InstallWindows.cmake")
 endif()
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR MINGW OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
@@ -65,6 +70,13 @@ if(CMAKE_COMPILER_IS_GNUCXX OR MINGW OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang
     if (CMAKE_VERSION VERSION_LESS "3.1")
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
     endif ()
+
+    # Automatically use ccache if found
+    find_program(CCACHE_FOUND ccache)
+    if(CCACHE_FOUND)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+    endif(CCACHE_FOUND)
 
 elseif(MSVC)
     add_definitions(-DNOMINMAX)
@@ -91,6 +103,6 @@ add_subdirectory(src)
 # Enable CMake's unit test framework
 if(BUILD_TESTS)
     enable_testing()
-    add_subdirectory(src/unittests)
+    add_subdirectory(src/unit_tests)
 endif()
 
