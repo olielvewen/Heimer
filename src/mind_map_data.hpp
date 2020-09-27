@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Heimer. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MINDMAPDATA_HPP
-#define MINDMAPDATA_HPP
+#ifndef MIND_MAP_DATA_HPP
+#define MIND_MAP_DATA_HPP
 
 #include <QString>
 
@@ -46,6 +46,13 @@ public:
 
     void setEdgeColor(const QColor & edgeColor);
 
+<<<<<<< HEAD:src/mind_map_data.hpp
+=======
+    QColor gridColor() const;
+
+    void setGridColor(const QColor & edgeColor);
+
+>>>>>>> upstream/master:src/mindmapdata.hpp
     double edgeWidth() const;
 
     void setEdgeWidth(double width);
@@ -67,9 +74,15 @@ public:
     void setVersion(const QString & version);
 
     ImageManager & imageManager();
+<<<<<<< HEAD:src/mind_map_data.hpp
 
     const ImageManager & imageManager() const;
 
+=======
+
+    const ImageManager & imageManager() const;
+
+>>>>>>> upstream/master:src/mindmapdata.hpp
 private:
     void copyGraph(const MindMapData & other);
 
@@ -81,6 +94,11 @@ private:
 
     QColor m_edgeColor = Constants::MindMap::DEFAULT_EDGE_COLOR;
 
+<<<<<<< HEAD:src/mind_map_data.hpp
+=======
+    QColor m_gridColor = Constants::MindMap::DEFAULT_GRID_COLOR;
+
+>>>>>>> upstream/master:src/mindmapdata.hpp
     double m_edgeWidth = Constants::MindMap::DEFAULT_EDGE_WIDTH;
 
     int m_textSize = Constants::MindMap::DEFAULT_TEXT_SIZE;
@@ -94,4 +112,4 @@ private:
 
 typedef std::shared_ptr<MindMapData> MindMapDataPtr;
 
-#endif // MINDMAPDATA_HPP
+#endif // MIND_MAP_DATA_HPP

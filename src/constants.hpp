@@ -82,12 +82,25 @@ static const double WIDTH_SCALE = 0.5;
 
 namespace Export {
 
+namespace Png {
+
 static const QString FILE_EXTENSION = ".png";
 
 static const int MIN_IMAGE_SIZE = 0;
 
 static const int MAX_IMAGE_SIZE = 99999;
 
+<<<<<<< HEAD
+=======
+} // namespace Png
+
+namespace Svg {
+
+static const QString FILE_EXTENSION = ".svg";
+
+} // namespace Svg
+
+>>>>>>> upstream/master
 } // namespace Export
 
 namespace Grid {
@@ -103,6 +116,11 @@ namespace MindMap {
 static const QColor DEFAULT_BACKGROUND_COLOR { 0xba, 0xbd, 0xb6 };
 
 static const QColor DEFAULT_EDGE_COLOR { 0, 0, 0, 200 };
+<<<<<<< HEAD
+=======
+
+static const QColor DEFAULT_GRID_COLOR { Qt::gray };
+>>>>>>> upstream/master
 
 static const double DEFAULT_EDGE_WIDTH = 2.0;
 
@@ -191,6 +209,8 @@ namespace View {
 static const int CLICK_TOLERANCE = 5;
 
 static const double DRAG_NODE_OPACITY = 0.5;
+
+static const int TOO_QUICK_ACTION_DELAY_MS = 500;
 
 static const int ZOOM_MAX = 200;
 

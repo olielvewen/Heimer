@@ -1,5 +1,6 @@
 add_subdirectory(contrib/SimpleLogger EXCLUDE_FROM_ALL)
 include_directories(contrib/SimpleLogger/src)
+<<<<<<< HEAD
 
 add_subdirectory(contrib/Argengine EXCLUDE_FROM_ALL)
 include_directories(contrib/Argengine/src)
@@ -17,6 +18,26 @@ set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINAR
 # Set sources
 set(SRC
     about_dlg.cpp
+=======
+
+add_subdirectory(contrib/Argengine EXCLUDE_FROM_ALL)
+include_directories(contrib/Argengine/src)
+
+# Translation files in src/translations (without .ts)
+set(TS heimer_fi heimer_fr heimer_it heimer_nl)
+set(TS_FILES)
+set(QM_FILES)
+foreach(TS_FILE ${TS})
+    list(APPEND TS_FILES ${CMAKE_SOURCE_DIR}/src/translations/${TS_FILE}.ts)
+    list(APPEND QM_FILES ${CMAKE_BINARY_DIR}/data/translations/${TS_FILE}.qm)
+endforeach()
+set_source_files_properties(${TS_FILES} PROPERTIES OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/data/translations)
+
+# Set sources for the lib
+set(LIB_SRC
+    about_dlg.cpp
+    alz_serializer.cpp
+>>>>>>> upstream/master
     application.cpp
     constants.hpp
     copy_paste.cpp
@@ -35,6 +56,7 @@ set(SRC
     hash_seed.cpp
     image.cpp
     image_manager.cpp
+<<<<<<< HEAD
     png_export_dialog.cpp
     layers.hpp
     layout_optimization_dialog.cpp
@@ -43,6 +65,14 @@ set(SRC
     main_context_menu.cpp
     main_window.cpp
     magic_zoom.cpp
+=======
+    layers.hpp
+    layout_optimization_dialog.cpp
+    layout_optimizer.cpp
+    magic_zoom.cpp
+    main_context_menu.cpp
+    main_window.cpp
+>>>>>>> upstream/master
     mediator.cpp
     mind_map_data.cpp
     mind_map_data_base.cpp
@@ -50,19 +80,41 @@ set(SRC
     node.cpp
     node_handle.cpp
     png_export_dialog.cpp
+<<<<<<< HEAD
     reader.cpp
     recent_files_manager.cpp
     recent_files_menu.cpp
     selection_group.cpp
     serializer.cpp
     state_machine.cpp
+=======
+    recent_files_manager.cpp
+    recent_files_menu.cpp
+    selection_group.cpp
+    settings.cpp
+    state_machine.cpp
+    svg_export_dialog.cpp
+    test_mode.cpp
+>>>>>>> upstream/master
     text_edit.cpp
     undo_stack.cpp
     user_exception.hpp
     whats_new_dlg.cpp
+<<<<<<< HEAD
     writer.cpp
 )
 
+=======
+    xml_reader.cpp
+    xml_writer.cpp
+)
+
+# Set sources for the app
+set(APP_SRC
+    main.cpp
+)
+
+>>>>>>> upstream/master
 # Need to copy the QRC file to binary dir where the QM-files will be generated.
 # This is because the paths in translations.qrc are relative to itself.
 configure_file(${CMAKE_SOURCE_DIR}/data/translations/translations.qrc ${CMAKE_BINARY_DIR}/data/translations/translations.qrc COPYONLY)
@@ -89,7 +141,7 @@ if(MINGW)
             ${CMAKE_RC_COMPILER}
             -I${CMAKE_SOURCE_DIR} -i${CMAKE_SOURCE_DIR}/data/icons/WindowsHeimer.rc
             -o ${CMAKE_CURRENT_BINARY_DIR}/windowsrc.o)
-    set(SRC ${SRC} ${CMAKE_CURRENT_BINARY_DIR}/windowsrc.o)
+    set(APP_SRC ${APP_SRC} ${CMAKE_CURRENT_BINARY_DIR}/windowsrc.o)
 endif()
 
 # Copy desktop file
@@ -106,8 +158,17 @@ if(UNIX)
     DEPENDS ${BINARY_NAME})
 endif()
 
+# Add the library
+add_library(${LIBRARY_NAME} STATIC ${LIB_SRC} ${MOC_SRC} ${RC_SRC} ${UI_HDRS} ${QM})
+target_link_libraries(${LIBRARY_NAME} Qt5::Widgets Qt5::Svg Qt5::Xml SimpleLogger_static Argengine_static)
+
 # Add the executable
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+<<<<<<< HEAD
 add_executable(${BINARY_NAME} WIN32 ${SRC} ${MOC_SRC} ${RC_SRC} ${UI_HDRS} ${QM})
 
 target_link_libraries(${BINARY_NAME} Qt5::Widgets Qt5::Xml SimpleLogger_static Argengine_static)
+=======
+add_executable(${BINARY_NAME} WIN32 ${APP_SRC} ${MOC_SRC} ${RC_SRC} ${UI_HDRS} ${QM})
+target_link_libraries(${BINARY_NAME} Qt5::Widgets ${LIBRARY_NAME})
+>>>>>>> upstream/master

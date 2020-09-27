@@ -21,6 +21,10 @@
 #include "graphics_factory.hpp"
 #include "layers.hpp"
 #include "node.hpp"
+<<<<<<< HEAD
+=======
+#include "test_mode.hpp"
+>>>>>>> upstream/master
 
 #include "simple_logger.hpp"
 
@@ -97,7 +101,13 @@ void Edge::hoverLeaveEvent(QGraphicsSceneHoverEvent * event)
 
 QPen Edge::getPen() const
 {
+<<<<<<< HEAD
     return QPen { QBrush { QColor { m_color.red(), m_color.green(), m_color.blue(), 200 } }, m_width };
+=======
+    QPen pen { QBrush { QColor { m_color.red(), m_color.green(), m_color.blue() } }, m_width };
+    pen.setCapStyle(Qt::PenCapStyle::RoundCap);
+    return pen;
+>>>>>>> upstream/master
 }
 
 void Edge::initDots()
@@ -155,9 +165,17 @@ void Edge::setWidth(double width)
 void Edge::setArrowMode(ArrowMode arrowMode)
 {
     m_arrowMode = arrowMode;
+<<<<<<< HEAD
 #ifndef HEIMER_UNIT_TEST
     updateLine();
 #endif
+=======
+    if (!TestMode::enabled()) {
+        updateLine();
+    } else {
+        TestMode::logDisabledCode("Update line after arrow mode change");
+    }
+>>>>>>> upstream/master
 }
 
 void Edge::setColor(const QColor & color)
@@ -172,12 +190,20 @@ void Edge::setColor(const QColor & color)
 void Edge::setText(const QString & text)
 {
     m_text = text;
+<<<<<<< HEAD
 #ifndef HEIMER_UNIT_TEST
     if (m_label) {
         m_label->setText(text);
+=======
+    if (!TestMode::enabled()) {
+        if (m_label) {
+            m_label->setText(text);
+        }
+        setLabelVisible(!text.isEmpty());
+    } else {
+        TestMode::logDisabledCode("Set label text");
+>>>>>>> upstream/master
     }
-    setLabelVisible(!text.isEmpty());
-#endif
 }
 
 void Edge::setTextSize(int textSize)
@@ -337,11 +363,19 @@ void Edge::updateLine()
     const auto p1 = nearestPoints.first.location + sourceNode().pos();
     QVector2D direction1(sourceNode().pos() - p1);
     direction1.normalize();
+<<<<<<< HEAD
 
     const auto p2 = nearestPoints.second.location + targetNode().pos();
     QVector2D direction2(targetNode().pos() - p2);
     direction2.normalize();
 
+=======
+
+    const auto p2 = nearestPoints.second.location + targetNode().pos();
+    QVector2D direction2(targetNode().pos() - p2);
+    direction2.normalize();
+
+>>>>>>> upstream/master
     setLine(QLineF(
       p1 + (nearestPoints.first.isCorner ? Constants::Edge::CORNER_RADIUS_SCALE * (direction1 * sourceNode().cornerRadius()).toPointF() : QPointF { 0, 0 }),
       p2 + (nearestPoints.second.isCorner ? Constants::Edge::CORNER_RADIUS_SCALE * (direction2 * targetNode().cornerRadius()).toPointF() : QPointF { 0, 0 }) - //
@@ -354,6 +388,7 @@ void Edge::updateLine()
 
 Edge::~Edge()
 {
+<<<<<<< HEAD
 #ifndef HEIMER_UNIT_TEST
     juzzlin::L().debug() << "Deleting edge " << sourceNode().index() << " -> " << targetNode().index();
 
@@ -365,4 +400,19 @@ Edge::~Edge()
     sourceNode().removeGraphicsEdge(*this);
     targetNode().removeGraphicsEdge(*this);
 #endif
+=======
+    if (!TestMode::enabled()) {
+        juzzlin::L().debug() << "Deleting edge " << sourceNode().index() << " -> " << targetNode().index();
+
+        if (m_enableAnimations) {
+            m_sourceDotSizeAnimation->stop();
+            m_targetDotSizeAnimation->stop();
+        }
+
+        sourceNode().removeGraphicsEdge(*this);
+        targetNode().removeGraphicsEdge(*this);
+    } else {
+        TestMode::logDisabledCode("Edge destructor");
+    }
+>>>>>>> upstream/master
 }

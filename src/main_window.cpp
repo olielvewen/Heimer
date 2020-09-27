@@ -20,6 +20,10 @@
 #include "mediator.hpp"
 #include "recent_files_manager.hpp"
 #include "recent_files_menu.hpp"
+<<<<<<< HEAD:src/main_window.cpp
+=======
+#include "settings.hpp"
+>>>>>>> upstream/master:src/mainwindow.cpp
 #include "simple_logger.hpp"
 #include "whats_new_dlg.hpp"
 
@@ -33,7 +37,6 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QScreen>
-#include <QSettings>
 #include <QSpinBox>
 #include <QToolBar>
 #include <QVBoxLayout>
@@ -59,6 +62,10 @@ MainWindow::MainWindow()
   , m_gridSizeSpinBox(new QSpinBox(this))
   , m_textSizeSpinBox(new QSpinBox(this))
   , m_copyOnDragCheckBox(new QCheckBox(tr("Copy on drag"), this))
+<<<<<<< HEAD:src/main_window.cpp
+=======
+  , m_showGridCheckBox(new QCheckBox(tr("Show grid"), this))
+>>>>>>> upstream/master:src/mainwindow.cpp
 {
     if (!m_instance) {
         m_instance = this;
@@ -73,7 +80,6 @@ void MainWindow::addRedoAction(QMenu & menu)
 
     connect(m_redoAction, &QAction::triggered, [this]() {
         m_mediator->redo();
-        setupMindMapAfterUndoOrRedo();
     });
 
     m_redoAction->setEnabled(false);
@@ -87,7 +93,6 @@ void MainWindow::addUndoAction(QMenu & menu)
 
     connect(m_undoAction, &QAction::triggered, [this]() {
         m_mediator->undo();
-        setupMindMapAfterUndoOrRedo();
     });
 
     m_undoAction->setEnabled(false);
@@ -229,9 +234,45 @@ QWidgetAction * MainWindow::createGridSizeAction()
 
     // The ugly cast is needed because there are QSpinBox::valueChanged(int) and QSpinBox::valueChanged(QString)
     // In Qt > 5.10 one can use QOverload<double>::of(...)
+<<<<<<< HEAD:src/main_window.cpp
     connect(m_gridSizeSpinBox, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &MainWindow::gridSizeChanged);
+=======
+    const auto signal = static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged);
+    connect(m_gridSizeSpinBox, signal, this, &MainWindow::gridSizeChanged);
+    connect(m_gridSizeSpinBox, signal, Settings::saveGridSize);
+
+    m_gridSizeSpinBox->setValue(Settings::loadGridSize());
+>>>>>>> upstream/master:src/mainwindow.cpp
 
     return action;
+}
+
+void MainWindow::createExportSubMenu(QMenu & fileMenu)
+{
+    const auto exportMenu = new QMenu;
+    const auto exportMenuAction = fileMenu.addMenu(exportMenu);
+    exportMenuAction->setText(tr("&Export"));
+
+    // Add "export to PNG image"-action
+    const auto exportToPngAction = new QAction(tr("&PNG"), this);
+    exportMenu->addAction(exportToPngAction);
+    connect(exportToPngAction, &QAction::triggered, [=]() {
+        emit actionTriggered(StateMachine::Action::PngExportSelected);
+    });
+
+    exportMenu->addSeparator();
+
+    // Add "export to SVG file"-action
+    const auto exportToSvgAction = new QAction(tr("&SVG"), this);
+    exportMenu->addAction(exportToSvgAction);
+    connect(exportToSvgAction, &QAction::triggered, [=]() {
+        emit actionTriggered(StateMachine::Action::SvgExportSelected);
+    });
+
+    connect(&fileMenu, &QMenu::aboutToShow, [=]() {
+        exportToPngAction->setEnabled(m_mediator->hasNodes());
+        exportToSvgAction->setEnabled(m_mediator->hasNodes());
+    });
 }
 
 void MainWindow::createFileMenu()
@@ -282,6 +323,7 @@ void MainWindow::createFileMenu()
 
     fileMenu->addSeparator();
 
+<<<<<<< HEAD:src/main_window.cpp
     // Add "export to PNG image"-action
     const auto exportToPNGAction = new QAction(tr("&Export to PNG image") + threeDots, this);
     exportToPNGAction->setShortcut(QKeySequence("Ctrl+Shift+E"));
@@ -289,6 +331,9 @@ void MainWindow::createFileMenu()
     connect(exportToPNGAction, &QAction::triggered, [=]() {
         emit actionTriggered(StateMachine::Action::PngExportSelected);
     });
+=======
+    createExportSubMenu(*fileMenu);
+>>>>>>> upstream/master:src/mainwindow.cpp
 
     fileMenu->addSeparator();
 
@@ -301,7 +346,10 @@ void MainWindow::createFileMenu()
     });
 
     connect(fileMenu, &QMenu::aboutToShow, [=]() {
+<<<<<<< HEAD:src/main_window.cpp
         exportToPNGAction->setEnabled(m_mediator->hasNodes());
+=======
+>>>>>>> upstream/master:src/mainwindow.cpp
         recentFilesMenuAction->setEnabled(RecentFilesManager::instance().hasRecentFiles());
     });
 }
@@ -336,14 +384,29 @@ void MainWindow::createToolBar()
     toolBar->addSeparator();
     toolBar->addAction(createTextSizeAction());
     toolBar->addSeparator();
+    toolBar->addAction(createCornerRadiusAction());
+    toolBar->addSeparator();
     toolBar->addAction(createGridSizeAction());
+<<<<<<< HEAD:src/main_window.cpp
     toolBar->addSeparator();
     toolBar->addAction(createCornerRadiusAction());
+=======
+>>>>>>> upstream/master:src/mainwindow.cpp
 
     const auto spacer = new QWidget;
     spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     toolBar->addWidget(spacer);
+<<<<<<< HEAD:src/main_window.cpp
     toolBar->addWidget(m_copyOnDragCheckBox);
+=======
+    toolBar->addWidget(m_showGridCheckBox);
+    toolBar->addWidget(m_copyOnDragCheckBox);
+
+    connect(m_showGridCheckBox, &QCheckBox::stateChanged, this, &MainWindow::gridVisibleChanged);
+    connect(m_showGridCheckBox, &QCheckBox::stateChanged, Settings::saveGridVisibleState);
+
+    m_showGridCheckBox->setCheckState(Settings::loadGridVisibleState());
+>>>>>>> upstream/master:src/mainwindow.cpp
 }
 
 void MainWindow::createViewMenu()
@@ -351,6 +414,7 @@ void MainWindow::createViewMenu()
     const auto viewMenu = menuBar()->addMenu(tr("&View"));
 
     // Add "fullScreen"-action
+<<<<<<< HEAD:src/main_window.cpp
     const auto fullScreen = new QAction(tr("Full Screen"), this);
     fullScreen->setCheckable(true);
     fullScreen->setChecked(false);
@@ -360,6 +424,19 @@ void MainWindow::createViewMenu()
             m_sizeBeforeFullScreen = size();
             showFullScreen();
         } else {
+=======
+    m_fullScreenAction = new QAction(tr("Full Screen"), this);
+    m_fullScreenAction->setCheckable(true);
+    m_fullScreenAction->setChecked(false);
+    viewMenu->addAction(m_fullScreenAction);
+    connect(m_fullScreenAction, &QAction::triggered, [=](bool checked) {
+        if (checked) {
+            Settings::saveFullScreen(true);
+            m_sizeBeforeFullScreen = size();
+            showFullScreen();
+        } else {
+            Settings::saveFullScreen(false);
+>>>>>>> upstream/master:src/mainwindow.cpp
             showNormal();
             resize(m_sizeBeforeFullScreen);
         }
@@ -401,11 +478,16 @@ void MainWindow::initialize()
     const int width = screenGeometry.width();
 
     // Read dialog size data
+<<<<<<< HEAD:src/main_window.cpp
     QSettings settings;
     settings.beginGroup(m_settingsGroup);
     const double defaultScale = 0.8;
     resize(settings.value("size", QSize(width, height) * defaultScale).toSize());
     settings.endGroup();
+=======
+    const double defaultScale = 0.8;
+    resize(Settings::loadWindowSize(QSize(width, height) * defaultScale));
+>>>>>>> upstream/master:src/mainwindow.cpp
 
     // Try to center the window.
     move(width / 2 - this->width() / 2, height / 2 - this->height() / 2);
@@ -457,6 +539,18 @@ void MainWindow::populateMenuBar()
     createHelpMenu();
 }
 
+<<<<<<< HEAD:src/main_window.cpp
+=======
+void MainWindow::appear()
+{
+    if (Settings::loadFullScreen()) {
+        m_fullScreenAction->trigger();
+    } else {
+        show();
+    }
+}
+
+>>>>>>> upstream/master:src/mainwindow.cpp
 bool MainWindow::copyOnDragEnabled() const
 {
     return m_copyOnDragCheckBox->isChecked();
@@ -468,6 +562,17 @@ void MainWindow::disableUndoAndRedo()
     m_redoAction->setEnabled(false);
 }
 
+<<<<<<< HEAD:src/main_window.cpp
+=======
+void MainWindow::enableWidgetSignals(bool enable)
+{
+    m_cornerRadiusSpinBox->blockSignals(!enable);
+    m_edgeWidthSpinBox->blockSignals(!enable);
+    m_textSizeSpinBox->blockSignals(!enable);
+    m_gridSizeSpinBox->blockSignals(!enable);
+}
+
+>>>>>>> upstream/master:src/mainwindow.cpp
 void MainWindow::setCornerRadius(int value)
 {
     if (m_cornerRadiusSpinBox->value() != value) {
@@ -494,16 +599,16 @@ void MainWindow::enableUndo(bool enable)
     m_undoAction->setEnabled(enable);
 }
 
+void MainWindow::enableRedo(bool enable)
+{
+    m_redoAction->setEnabled(enable);
+}
+
 void MainWindow::enableSave(bool enable)
 {
     setTitle();
 
     m_saveAction->setEnabled(enable);
-}
-
-void MainWindow::enableSaveAs(bool enable)
-{
-    m_saveAsAction->setEnabled(enable);
 }
 
 void MainWindow::showAboutDlg()
@@ -517,24 +622,21 @@ void MainWindow::showAboutQtDlg()
 }
 
 void MainWindow::showWhatsNewDlg()
+<<<<<<< HEAD:src/main_window.cpp
+{
+    m_whatsNewDlg->exec();
+}
+
+void MainWindow::saveWindowSize()
+=======
+>>>>>>> upstream/master:src/mainwindow.cpp
 {
     m_whatsNewDlg->exec();
 }
 
 void MainWindow::saveWindowSize()
 {
-    QSettings settings;
-    settings.beginGroup(m_settingsGroup);
-    settings.setValue("size", size());
-    settings.endGroup();
-}
-
-void MainWindow::setupMindMapAfterUndoOrRedo()
-{
-    m_undoAction->setEnabled(m_mediator->isUndoable());
-    m_redoAction->setEnabled(m_mediator->isRedoable());
-
-    m_mediator->setupMindMapAfterUndoOrRedo();
+    Settings::saveWindowSize(size());
 }
 
 void MainWindow::showErrorDialog(QString message)
@@ -555,7 +657,7 @@ void MainWindow::initializeNewMindMap()
 
 void MainWindow::setSaveActionStatesOnNewMindMap()
 {
-    m_saveAction->setEnabled(false);
+    m_saveAction->setEnabled(true);
     m_saveAsAction->setEnabled(true);
 }
 

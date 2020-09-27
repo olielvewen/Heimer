@@ -50,9 +50,16 @@ public:
 
     static MainWindow * instance();
 
+<<<<<<< HEAD:src/main_window.hpp
+=======
+    void appear();
+
+>>>>>>> upstream/master:src/mainwindow.hpp
     bool copyOnDragEnabled() const;
 
     void disableUndoAndRedo();
+
+    void enableWidgetSignals(bool enable);
 
     void initialize();
 
@@ -72,9 +79,11 @@ public slots:
 
     void enableUndo(bool enable);
 
+    void enableRedo(bool enable);
+
     void enableSave(bool enable);
 
-    void enableSaveAs(bool enable);
+    void setCornerRadius(int value);
 
     void setCornerRadius(int value);
 
@@ -97,6 +106,8 @@ signals:
 
     void gridSizeChanged(int size);
 
+    void gridVisibleChanged(int state);
+
     void textSizeChanged(int value);
 
     void zoomInTriggered();
@@ -106,8 +117,6 @@ signals:
     void zoomToFitTriggered();
 
 private slots:
-
-    void setupMindMapAfterUndoOrRedo();
 
     void showAboutDlg();
 
@@ -130,6 +139,8 @@ private:
 
     void createEditMenu();
 
+    void createExportSubMenu(QMenu & fileMenu);
+
     void createFileMenu();
 
     void createHelpMenu();
@@ -144,6 +155,11 @@ private:
 
     WhatsNewDlg * m_whatsNewDlg;
 
+<<<<<<< HEAD:src/main_window.hpp
+=======
+    QAction * m_fullScreenAction = nullptr;
+
+>>>>>>> upstream/master:src/mainwindow.hpp
     QAction * m_saveAction = nullptr;
 
     QAction * m_saveAsAction = nullptr;
@@ -162,11 +178,14 @@ private:
 
     QCheckBox * m_copyOnDragCheckBox = nullptr;
 
+<<<<<<< HEAD:src/main_window.hpp
+=======
+    QCheckBox * m_showGridCheckBox = nullptr;
+
+>>>>>>> upstream/master:src/mainwindow.hpp
     QString m_argMindMapFile;
 
     std::shared_ptr<Mediator> m_mediator;
-
-    const char * m_settingsGroup = "MainWindow";
 
     bool m_closeNow = false;
 

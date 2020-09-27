@@ -3,10 +3,60 @@ x.y.z
 
 New features:
 
+<<<<<<< HEAD
 Bug fixes:
 
 Other:
 
+=======
+* Fix GitHub Issue #38: Add display grid option
+
+Bug fixes:
+
+* Fix Github Issue #106: Memory leak when changing Edge width, Text size and corner radius
+
+Other:
+
+* Fix GitHub Issue #98: Program doesn't remember the window being maximized
+
+1.19.0
+======
+
+New features:
+
+* Fix GitHub Issue #77: Ctrl+S on new map should directly open 'save as' dialog
+* Fix GitHub Issue #85: Export SVG
+* Fix GitHub Issue #100: Use a better initial directory when saving a new file
+* Add Dutch translations
+
+Bug fixes:
+
+* Fix GitHub Issue #87: Group move doesn't work with the move handle
+* Fix GitHub Issue #97: Redo does stuff when redo shouldn't be possible
+* Fix GitHub Issue #96: Saving sometimes doesn't work after loading an existing file
+
+Other:
+
+* Fix GitHub Issue #99: Program doesn't remember grid size
+* Fix GitHub Issue #101: Windows portable
+
+1.18.0
+======
+
+New features:
+
+* Add a shortcut Ctrl+Shift+F to create new floating nodes
+
+Bug fixes:
+
+* Make layout optimizer honor the active grid setting
+
+Other:
+
+* Usability improvement: Move create node action to top
+* Usability improvement: Set optimize button as the default
+
+>>>>>>> upstream/master
 1.17.0
 ======
 

@@ -13,19 +13,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Heimer. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef USER_EXCEPTION_HPP
-#define USER_EXCEPTION_HPP
+#include "xml_writer.hpp"
 
-#include <stdexcept>
-#include <string>
+#include <QFile>
+#include <QTextStream>
 
-class UserException : public std::runtime_error
+bool XmlWriter::writeToFile(QDomDocument document, QString filePath)
 {
-public:
-    explicit UserException(std::string msg)
-      : runtime_error(msg)
-    {
+    QFile file(filePath);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << document;
+        file.close();
+        return true;
     }
-};
 
-#endif // USER_EXCEPTION_HPP
+    return false;
+}

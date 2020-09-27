@@ -21,7 +21,11 @@ endif()
 
 # Global version
 set(VERSION_MAJOR 1)
+<<<<<<< HEAD
 set(VERSION_MINOR 17)
+=======
+set(VERSION_MINOR 19)
+>>>>>>> upstream/master
 set(VERSION_PATCH 0)
 set(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 
@@ -83,6 +87,7 @@ elseif(MSVC)
 endif()
 
 set(BINARY_NAME "heimer")
+set(LIBRARY_NAME "HeimerLib")
 
 add_definitions(-DVERSION="${VERSION}")
 
@@ -93,6 +98,7 @@ find_package(Qt5Core ${QT_MIN_VER} REQUIRED)
 find_package(Qt5Xml ${QT_MIN_VER} REQUIRED)
 find_package(Qt5Widgets ${QT_MIN_VER} REQUIRED)
 find_package(Qt5LinguistTools ${QT_MIN_VER} REQUIRED)
+find_package(Qt5Svg ${QT_MIN_VER} REQUIRED)
 find_package(Qt5Test ${QT_MIN_VER} REQUIRED)
 
 # Install paths depend on the build type and target platform

@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Heimer. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STATEMACHINE_HPP
-#define STATEMACHINE_HPP
+#ifndef STATE_MACHINE_HPP
+#define STATE_MACHINE_HPP
 
 #include <QObject>
 
@@ -37,12 +37,17 @@ public:
         Save,
         ShowBackgroundColorDialog,
         ShowEdgeColorDialog,
+<<<<<<< HEAD:src/state_machine.hpp
+=======
+        ShowGridColorDialog,
+>>>>>>> upstream/master:src/statemachine.hpp
         ShowImageFileDialog,
         ShowLayoutOptimizationDialog,
         ShowNotSavedDialog,
         ShowOpenDialog,
         ShowPngExportDialog,
         ShowSaveAsDialog,
+        ShowSvgExportDialog,
         TryCloseWindow
     };
 
@@ -52,6 +57,11 @@ public:
         BackgroundColorChangeRequested,
         EdgeColorChanged,
         EdgeColorChangeRequested,
+<<<<<<< HEAD:src/state_machine.hpp
+=======
+        GridColorChanged,
+        GridColorChangeRequested,
+>>>>>>> upstream/master:src/statemachine.hpp
         ImageAttachmentRequested,
         ImageLoadFailed,
         LayoutOptimizationRequested,
@@ -61,12 +71,17 @@ public:
         MindMapSaved,
         MindMapSavedAs,
         MindMapSaveFailed,
+        MindMapSaveAsCanceled,
         MindMapSaveAsFailed,
         NewMindMapInitialized,
         NewSelected,
         NotSavedDialogAccepted,
         NotSavedDialogCanceled,
         NotSavedDialogDiscarded,
+<<<<<<< HEAD:src/state_machine.hpp
+=======
+        OpeningMindMapCanceled,
+>>>>>>> upstream/master:src/statemachine.hpp
         OpeningMindMapFailed,
         OpenSelected,
         PngExported,
@@ -76,6 +91,11 @@ public:
         RedoSelected,
         SaveAsSelected,
         SaveSelected,
+<<<<<<< HEAD:src/state_machine.hpp
+=======
+        SvgExported,
+        SvgExportSelected,
+>>>>>>> upstream/master:src/statemachine.hpp
         UndoSelected
     };
 
@@ -106,4 +126,4 @@ private:
     std::shared_ptr<Mediator> m_mediator;
 };
 
-#endif // STATEMACHINE_HPP
+#endif // STATE_MACHINE_HPP

@@ -2,7 +2,11 @@
 
 # Builds AppImage in Docker
 
+<<<<<<< HEAD:scripts/build-app-image
 HEIMER_VERSION=1.17.0
+=======
+HEIMER_VERSION=1.19.0
+>>>>>>> upstream/master:scripts/buildAppImage.sh
 
 CMD="export LANG=en_US.UTF-8 && \
      export LC_ALL=en_US.UTF-8 && \

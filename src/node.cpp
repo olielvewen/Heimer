@@ -21,11 +21,14 @@
 #include "image.hpp"
 #include "layers.hpp"
 #include "node_handle.hpp"
+<<<<<<< HEAD
+=======
+#include "test_mode.hpp"
+>>>>>>> upstream/master
 #include "text_edit.hpp"
 
 #include "simple_logger.hpp"
 
-#include <QGraphicsDropShadowEffect>
 #include <QGraphicsSceneHoverEvent>
 #include <QImage>
 #include <QPainter>
@@ -78,6 +81,7 @@ Node::Node(const Node & other)
     setColor(other.m_color);
 
     setCornerRadius(other.m_cornerRadius);
+<<<<<<< HEAD
 
     setImageRef(other.m_imageRef);
 
@@ -85,6 +89,15 @@ Node::Node(const Node & other)
 
     setLocation(other.m_location);
 
+=======
+
+    setImageRef(other.m_imageRef);
+
+    setIndex(other.m_index);
+
+    setLocation(other.m_location);
+
+>>>>>>> upstream/master
     m_size = other.m_size;
 
     setText(other.text());
@@ -96,19 +109,37 @@ Node::Node(const Node & other)
 
 void Node::addGraphicsEdge(Edge & edge)
 {
+<<<<<<< HEAD
 #ifndef HEIMER_UNIT_TEST
     m_graphicsEdges.push_back(&edge);
 #else
     Q_UNUSED(edge)
 #endif
+=======
+    if (!TestMode::enabled()) {
+        m_graphicsEdges.push_back(&edge);
+    } else {
+        TestMode::logDisabledCode("addGraphicsEdge");
+    }
+>>>>>>> upstream/master
 }
 
 void Node::removeGraphicsEdge(Edge & edge)
 {
+<<<<<<< HEAD
 #ifndef HEIMER_UNIT_TEST
     const auto iter = std::find(m_graphicsEdges.begin(), m_graphicsEdges.end(), &edge);
     if (iter != m_graphicsEdges.end()) {
         m_graphicsEdges.erase(iter);
+=======
+    if (!TestMode::enabled()) {
+        const auto iter = std::find(m_graphicsEdges.begin(), m_graphicsEdges.end(), &edge);
+        if (iter != m_graphicsEdges.end()) {
+            m_graphicsEdges.erase(iter);
+        }
+    } else {
+        TestMode::logDisabledCode("removeGraphicsEdge");
+>>>>>>> upstream/master
     }
 #else
     Q_UNUSED(edge)
@@ -315,10 +346,19 @@ NodeHandle * Node::hitsHandle(QPointF pos)
 
 void Node::initTextField()
 {
+<<<<<<< HEAD
 #ifndef HEIMER_UNIT_TEST
     m_textEdit->setTextWidth(-1);
     m_textEdit->setPos(-m_size.width() * 0.5 + Constants::Node::MARGIN, -m_size.height() * 0.5 + Constants::Node::MARGIN);
 #endif
+=======
+    if (!TestMode::enabled()) {
+        m_textEdit->setTextWidth(-1);
+        m_textEdit->setPos(-m_size.width() * 0.5 + Constants::Node::MARGIN, -m_size.height() * 0.5 + Constants::Node::MARGIN);
+    } else {
+        TestMode::logDisabledCode("initTestField");
+    }
+>>>>>>> upstream/master
 }
 
 void Node::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
@@ -361,7 +401,13 @@ void Node::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QW
 
         painter->drawPixmap(rect, scaledPixmap, scaledRect);
     } else {
+<<<<<<< HEAD
         painter->fillPath(path, QBrush(m_color));
+=======
+        const QPen pen(QColor { 2 * m_color.red() / 3, 2 * m_color.green() / 3, 2 * m_color.blue() / 3 }, 1);
+        painter->fillPath(path, QBrush(m_color));
+        painter->strokePath(path, pen);
+>>>>>>> upstream/master
     }
 
     // Patch for TextEdit
@@ -374,9 +420,17 @@ void Node::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QW
 void Node::setColor(const QColor & color)
 {
     m_color = color;
+<<<<<<< HEAD
 #ifndef HEIMER_UNIT_TEST
     update();
 #endif
+=======
+    if (!TestMode::enabled()) {
+        update();
+    } else {
+        TestMode::logDisabledCode("update() on setColor");
+    }
+>>>>>>> upstream/master
 }
 
 int Node::cornerRadius() const
@@ -458,11 +512,20 @@ void Node::setTextInputActive()
 
 QString Node::text() const
 {
+<<<<<<< HEAD
 #ifndef HEIMER_UNIT_TEST
     return m_textEdit->text();
 #else
     return m_text;
 #endif
+=======
+    if (!TestMode::enabled()) {
+        return m_textEdit->text();
+    } else {
+        TestMode::logDisabledCode("return widget text");
+        return m_text;
+    }
+>>>>>>> upstream/master
 }
 
 void Node::setText(const QString & text)
@@ -482,15 +545,25 @@ QColor Node::textColor() const
 void Node::setTextColor(const QColor & color)
 {
     m_textColor = color;
+<<<<<<< HEAD
 #ifndef HEIMER_UNIT_TEST
     m_textEdit->setDefaultTextColor(color);
     m_textEdit->update();
 #endif
+=======
+    if (!TestMode::enabled()) {
+        m_textEdit->setDefaultTextColor(color);
+        m_textEdit->update();
+    } else {
+        TestMode::logDisabledCode("set widget color");
+    }
+>>>>>>> upstream/master
 }
 
 void Node::setTextSize(int textSize)
 {
     m_textSize = textSize;
+<<<<<<< HEAD
 #ifndef HEIMER_UNIT_TEST
     m_textEdit->setTextSize(textSize);
     adjustSize();
@@ -508,6 +581,27 @@ void Node::setImageRef(size_t imageRef)
     }
 }
 
+=======
+    if (!TestMode::enabled()) {
+        m_textEdit->setTextSize(textSize);
+        adjustSize();
+    } else {
+        TestMode::logDisabledCode("set widget text size");
+    }
+}
+
+void Node::setImageRef(size_t imageRef)
+{
+    if (imageRef) {
+        m_imageRef = imageRef;
+        emit imageRequested(imageRef, *this);
+    } else if (m_imageRef) {
+        m_imageRef = imageRef;
+        applyImage({});
+    }
+}
+
+>>>>>>> upstream/master
 void Node::applyImage(const Image & image)
 {
     m_pixmap = QPixmap::fromImage(image.image());

@@ -24,6 +24,7 @@
 
 #include "simple_logger.hpp"
 
+#include <QFileInfo>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QSizePolicy>
@@ -66,6 +67,12 @@ void Mediator::addExistingGraphToScene()
         }
     }
 
+<<<<<<< HEAD
+=======
+    // This is to prevent nasty updated loops like in https://github.com/juzzlin/Heimer/issues/96
+    m_mainWindow.enableWidgetSignals(false);
+
+>>>>>>> upstream/master
     m_mainWindow.setCornerRadius(m_editorData->mindMapData()->cornerRadius());
     m_mainWindow.setEdgeWidth(m_editorData->mindMapData()->edgeWidth());
     m_mainWindow.setTextSize(m_editorData->mindMapData()->textSize());
@@ -73,6 +80,8 @@ void Mediator::addExistingGraphToScene()
     m_editorView->setCornerRadius(m_editorData->mindMapData()->cornerRadius());
     m_editorView->setEdgeColor(m_editorData->mindMapData()->edgeColor());
     m_editorView->setEdgeWidth(m_editorData->mindMapData()->edgeWidth());
+
+    m_mainWindow.enableWidgetSignals(true);
 }
 
 void Mediator::addEdge(Node & node1, Node & node2)
@@ -207,21 +216,30 @@ void Mediator::enableUndo(bool enable)
     m_mainWindow.enableUndo(enable);
 }
 
-void Mediator::exportToPNG(QString filename, QSize size, bool transparentBackground)
+void Mediator::enableRedo(bool enable)
+{
+    m_mainWindow.enableRedo(enable);
+}
+
+void Mediator::exportToPng(QString filename, QSize size, bool transparentBackground)
 {
     zoomForExport();
 
     L().info() << "Exporting a PNG image of size (" << size.width() << "x" << size.height() << ") to " << filename.toStdString();
+    const auto image = m_editorScene->toImage(size, m_editorData->backgroundColor(), transparentBackground);
 
-    QImage image(size, QImage::Format_ARGB32);
-    image.fill(transparentBackground ? Qt::transparent : m_editorData->backgroundColor());
+    emit pngExportFinished(image.save(filename));
+}
 
-    QPainter painter(&image);
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setRenderHint(QPainter::TextAntialiasing);
-    m_editorScene->render(&painter);
+void Mediator::exportToSvg(QString filename)
+{
+    zoomForExport();
 
-    emit exportFinished(image.save(filename));
+    L().info() << "Exporting an SVG image to " << filename.toStdString();
+    const QFileInfo fi(filename);
+    m_editorScene->toSvg(filename, fi.fileName());
+
+    emit svgExportFinished(true);
 }
 
 QString Mediator::fileName() const
@@ -362,6 +380,8 @@ void Mediator::redo()
 
     m_editorView->resetDummyDragItems();
     m_editorData->redo();
+
+    setupMindMapAfterUndoOrRedo();
 }
 
 void Mediator::removeItem(QGraphicsItem & item)
@@ -386,8 +406,6 @@ bool Mediator::saveMindMap()
 
 void Mediator::saveUndoPoint()
 {
-    L().debug() << "Saving undo point..";
-
     m_editorData->saveUndoPoint();
 }
 
@@ -439,6 +457,19 @@ void Mediator::setEdgeColor(QColor color)
     }
 }
 
+<<<<<<< HEAD
+=======
+void Mediator::setGridColor(QColor color)
+{
+    if (m_editorData->mindMapData()->gridColor() != color) {
+        saveUndoPoint();
+        m_editorData->mindMapData()->setGridColor(color);
+        m_editorView->setGridColor(color);
+        m_editorView->scene()->update();
+    }
+}
+
+>>>>>>> upstream/master
 void Mediator::setEdgeWidth(double value)
 {
     // Break loop with the spinbox
@@ -454,6 +485,10 @@ void Mediator::setEditorData(std::shared_ptr<EditorData> editorData)
     m_editorData = editorData;
 
     connect(m_editorData.get(), &EditorData::undoEnabled, this, &Mediator::enableUndo);
+<<<<<<< HEAD
+=======
+    connect(m_editorData.get(), &EditorData::redoEnabled, this, &Mediator::enableRedo);
+>>>>>>> upstream/master
 }
 
 void Mediator::setEditorView(EditorView & editorView)
@@ -533,6 +568,8 @@ void Mediator::undo()
 
     m_editorView->resetDummyDragItems();
     m_editorData->undo();
+
+    setupMindMapAfterUndoOrRedo();
 }
 
 static const int zoomSensitivity = 20;

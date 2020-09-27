@@ -17,6 +17,10 @@
 
 #include "graph.hpp"
 #include "node.hpp"
+<<<<<<< HEAD
+=======
+#include "test_mode.hpp"
+>>>>>>> upstream/master
 
 #include <stdexcept>
 #include <string>
@@ -25,6 +29,10 @@ using std::make_shared;
 
 GraphTest::GraphTest()
 {
+<<<<<<< HEAD
+=======
+    TestMode::setEnabled(true);
+>>>>>>> upstream/master
 }
 
 void GraphTest::testAddEdge()
@@ -54,6 +62,7 @@ void GraphTest::testAddEdge()
     QCOMPARE(dut.getEdgesToNode(node0).size(), static_cast<size_t>(0));
 }
 
+<<<<<<< HEAD
 void GraphTest::testAddEdgeByIndices()
 {
     Graph dut;
@@ -80,6 +89,8 @@ void GraphTest::testAddEdgeByIndices()
     QCOMPARE(dut.getEdgesToNode(node0).size(), static_cast<size_t>(0));
 }
 
+=======
+>>>>>>> upstream/master
 void GraphTest::testAddNode()
 {
     Graph dut;

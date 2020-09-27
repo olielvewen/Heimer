@@ -33,6 +33,13 @@ void StateMachine::calculateState(StateMachine::Action action)
         m_state = State::ShowEdgeColorDialog;
         break;
 
+<<<<<<< HEAD:src/state_machine.cpp
+=======
+    case Action::GridColorChangeRequested:
+        m_state = State::ShowGridColorDialog;
+        break;
+
+>>>>>>> upstream/master:src/statemachine.cpp
     case Action::ImageAttachmentRequested:
         m_state = State::ShowImageFileDialog;
         break;
@@ -78,14 +85,26 @@ void StateMachine::calculateState(StateMachine::Action action)
 
     case Action::BackgroundColorChanged:
     case Action::EdgeColorChanged:
+<<<<<<< HEAD:src/state_machine.cpp
+=======
+    case Action::GridColorChanged:
+>>>>>>> upstream/master:src/statemachine.cpp
     case Action::ImageLoadFailed:
     case Action::LayoutOptimized:
     case Action::MindMapOpened:
     case Action::MindMapSaveFailed:
+    case Action::MindMapSaveAsCanceled:
     case Action::MindMapSaveAsFailed:
     case Action::NewMindMapInitialized:
     case Action::NotSavedDialogCanceled:
+<<<<<<< HEAD:src/state_machine.cpp
     case Action::PngExported:
+=======
+    case Action::OpeningMindMapCanceled:
+    case Action::OpeningMindMapFailed:
+    case Action::PngExported:
+    case Action::SvgExported:
+>>>>>>> upstream/master:src/statemachine.cpp
         m_quitType = QuitType::None;
         m_state = State::Edit;
         break;
@@ -125,6 +144,13 @@ void StateMachine::calculateState(StateMachine::Action action)
         m_state = State::ShowSaveAsDialog;
         break;
 
+<<<<<<< HEAD:src/state_machine.cpp
+=======
+    case Action::SvgExportSelected:
+        m_state = State::ShowSvgExportDialog;
+        break;
+
+>>>>>>> upstream/master:src/statemachine.cpp
     case Action::RecentFileSelected:
         m_quitType = QuitType::OpenRecent;
         if (m_mediator->isModified()) {

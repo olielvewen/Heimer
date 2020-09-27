@@ -123,8 +123,11 @@ void EditorView::handleMousePressEventOnNodeHandle(QMouseEvent & event, NodeHand
         return;
     }
 
+<<<<<<< HEAD
     m_mediator.clearSelectionGroup();
 
+=======
+>>>>>>> upstream/master
     if (event.button() == Qt::LeftButton) {
         handleLeftButtonClickOnNodeHandle(nodeHandle);
     }
@@ -150,16 +153,28 @@ void EditorView::handleLeftButtonClickOnNodeHandle(NodeHandle & nodeHandle)
 {
     switch (nodeHandle.role()) {
     case NodeHandle::Role::Add:
+<<<<<<< HEAD
+=======
+        m_mediator.clearSelectionGroup();
+>>>>>>> upstream/master
         initiateNewNodeDrag(nodeHandle);
         break;
     case NodeHandle::Role::Drag:
         initiateNodeDrag(nodeHandle.parentNode());
         break;
     case NodeHandle::Role::Color:
+<<<<<<< HEAD
+=======
+        m_mediator.clearSelectionGroup();
+>>>>>>> upstream/master
         m_mediator.setSelectedNode(&nodeHandle.parentNode());
         openNodeColorDialog();
         break;
     case NodeHandle::Role::TextColor:
+<<<<<<< HEAD
+=======
+        m_mediator.clearSelectionGroup();
+>>>>>>> upstream/master
         m_mediator.setSelectedNode(&nodeHandle.parentNode());
         openNodeTextColorDialog();
         break;
@@ -284,8 +299,12 @@ void EditorView::mousePressEvent(QMouseEvent * event)
     const QRectF clickRect(clickedScenePos.x() - tolerance, clickedScenePos.y() - tolerance, tolerance * 2, tolerance * 2);
 
     // Fetch all items at the location
+<<<<<<< HEAD
     const QList<QGraphicsItem *> items = scene()->items(clickRect, Qt::IntersectsItemShape, Qt::DescendingOrder);
 
+=======
+    const auto items = scene()->items(clickRect, Qt::IntersectsItemShape, Qt::DescendingOrder);
+>>>>>>> upstream/master
     if (items.size()) {
         const auto item = *items.begin();
         if (const auto node = dynamic_cast<Node *>(item)) {
@@ -321,7 +340,11 @@ void EditorView::mouseReleaseEvent(QMouseEvent * event)
             m_mediator.mouseAction().clear();
             break;
         case MouseAction::Action::CreateOrConnectNode:
+<<<<<<< HEAD
             if (auto sourceNode = m_mediator.mouseAction().sourceNode()) {
+=======
+            if (const auto sourceNode = m_mediator.mouseAction().sourceNode()) {
+>>>>>>> upstream/master
                 if (m_connectionTargetNode) {
                     m_mediator.addEdge(*sourceNode, *m_connectionTargetNode);
                     m_connectionTargetNode->setSelected(false);
@@ -364,7 +387,11 @@ void EditorView::openMainContextMenu(MainContextMenu::Mode mode)
 
 void EditorView::openNodeColorDialog()
 {
+<<<<<<< HEAD
     auto node = m_mediator.selectedNode();
+=======
+    const auto node = m_mediator.selectedNode();
+>>>>>>> upstream/master
     const auto color = QColorDialog::getColor(Qt::white, this);
     if (color.isValid()) {
         m_mediator.saveUndoPoint();
@@ -444,6 +471,18 @@ void EditorView::setCornerRadius(int cornerRadius)
 void EditorView::setGridSize(int size)
 {
     m_grid.setSize(size);
+<<<<<<< HEAD
+=======
+    if (scene())
+        scene()->update();
+}
+
+void EditorView::setGridVisible(bool visible)
+{
+    m_gridVisible = visible;
+    if (scene())
+        scene()->update();
+>>>>>>> upstream/master
 }
 
 void EditorView::setEdgeColor(const QColor & edgeColor)
@@ -451,6 +490,14 @@ void EditorView::setEdgeColor(const QColor & edgeColor)
     m_edgeColor = edgeColor;
 }
 
+<<<<<<< HEAD
+=======
+void EditorView::setGridColor(const QColor & gridColor)
+{
+    m_mediator.mindMapData()->setGridColor(gridColor);
+}
+
+>>>>>>> upstream/master
 void EditorView::setEdgeWidth(double edgeWidth)
 {
     m_edgeWidth = edgeWidth;
@@ -496,4 +543,36 @@ void EditorView::zoomToFit(QRectF nodeBoundingRect)
     m_nodeBoundingRect = nodeBoundingRect;
 }
 
+<<<<<<< HEAD
+=======
+void EditorView::drawBackground(QPainter *painter, const QRectF &rect)
+{
+    painter->save();
+
+    painter->fillRect(rect, this->backgroundBrush());
+
+    const int gridSize = m_grid.size();
+
+    if (m_gridVisible && gridSize != 0)
+    {
+        const qreal left = int(rect.left()) - (int(rect.left()) % gridSize);
+        const qreal top = int(rect.top()) - (int(rect.top()) % gridSize);
+
+        QVarLengthArray<QLineF, 100> lines;
+
+        for (qreal x = left; x < rect.right(); x += gridSize) {
+            lines.append(QLineF(x, rect.top(), x, rect.bottom()));
+        }
+        for (qreal y = top; y < rect.bottom(); y += gridSize) {
+            lines.append(QLineF(rect.left(), y, rect.right(), y));
+        }
+
+        painter->setPen(m_mediator.mindMapData()->gridColor());
+        painter->drawLines(lines.data(), lines.size());
+    }
+
+    painter->restore();
+}
+
+>>>>>>> upstream/master
 EditorView::~EditorView() = default;

@@ -15,6 +15,10 @@
 
 #include "graph.hpp"
 #include "node.hpp"
+<<<<<<< HEAD
+=======
+#include "test_mode.hpp"
+>>>>>>> upstream/master
 
 #include "simple_logger.hpp"
 
@@ -98,6 +102,7 @@ void Graph::addEdge(EdgePtr newEdge)
     }
 }
 
+<<<<<<< HEAD
 #ifdef HEIMER_UNIT_TEST
 void Graph::addEdge(int node0, int node1)
 {
@@ -116,6 +121,8 @@ void Graph::addEdge(int node0, int node1)
 }
 #endif
 
+=======
+>>>>>>> upstream/master
 bool Graph::areDirectlyConnected(NodePtr node0, NodePtr node1)
 {
     for (auto && edge : m_edges) {

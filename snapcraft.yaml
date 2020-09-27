@@ -1,5 +1,9 @@
 name: heimer
+<<<<<<< HEAD
 version: '1.17.0'
+=======
+version: '1.19.0'
+>>>>>>> upstream/master
 summary: Heimer is a simple cross-platform mind map tool.
 description: |
   Heimer is a simple cross-platform mind map creation tool.
@@ -59,8 +63,13 @@ parts:
       - qtbase5-dev
       - qttools5-dev
       - qttools5-dev-tools
+      - libqt5svg5-dev
     stage-packages:
       - libqt5gui5
+<<<<<<< HEAD
+=======
+      - libqt5svg5
+>>>>>>> upstream/master
       - libqt5xml5
     after: [desktop-qt5]
     override-prime: |

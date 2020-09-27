@@ -68,9 +68,15 @@ public:
 
     // Create a new floating node
     NodePtr createAndAddNode(QPointF pos);
+<<<<<<< HEAD
 
     MouseAction & mouseAction();
 
+=======
+
+    MouseAction & mouseAction();
+
+>>>>>>> upstream/master
     void deleteEdge(Edge & edge);
 
     void deleteNode(Node & node);
@@ -135,7 +141,7 @@ public:
 
     void setSelectedNode(Node * node);
 
-    void setupMindMapAfterUndoOrRedo();
+    void toggleNodeInSelectionGroup(Node & node);
 
     void toggleNodeInSelectionGroup(Node & node);
 
@@ -145,7 +151,11 @@ public slots:
 
     void enableUndo(bool enable);
 
-    void exportToPNG(QString filename, QSize size, bool transparentBackground);
+    void enableRedo(bool enable);
+
+    void exportToPng(QString filename, QSize size, bool transparentBackground);
+
+    void exportToSvg(QString filename);
 
     void saveUndoPoint();
 
@@ -155,6 +165,11 @@ public slots:
 
     void setEdgeColor(QColor color);
 
+<<<<<<< HEAD
+=======
+    void setGridColor(QColor color);
+
+>>>>>>> upstream/master
     void setEdgeWidth(double value);
 
     void setTextSize(int textSize);
@@ -171,8 +186,13 @@ private slots:
 
 signals:
 
-    void exportFinished(bool success);
+    void pngExportFinished(bool success);
 
+<<<<<<< HEAD
+=======
+    void svgExportFinished(bool success);
+
+>>>>>>> upstream/master
 private:
     void addExistingGraphToScene();
 
@@ -182,6 +202,11 @@ private:
 
     void connectGraphToImageManager();
 
+<<<<<<< HEAD
+=======
+    void setupMindMapAfterUndoOrRedo();
+
+>>>>>>> upstream/master
     std::shared_ptr<EditorData> m_editorData;
 
     std::unique_ptr<EditorScene> m_editorScene;

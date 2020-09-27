@@ -3,8 +3,13 @@
         <file>heimer_fi.qm</file>
         <file>heimer_fr.qm</file>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         <file>heimer_it.qm</file>
+>>>>>>> upstream/master
+=======
+        <file>heimer_it.qm</file>
+        <file>heimer_nl.qm</file>
 >>>>>>> upstream/master
     </qresource>
 </RCC>

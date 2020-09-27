@@ -32,6 +32,7 @@ class MainWindow;
 class Mediator;
 class Node;
 class PngExportDialog;
+class SvgExportDialog;
 
 class Application : public QObject
 {
@@ -59,10 +60,13 @@ private:
 
     QString getFileDialogFileText() const;
 
+<<<<<<< HEAD
     QString loadRecentImagePath() const;
 
     QString loadRecentPath() const;
 
+=======
+>>>>>>> upstream/master
     void openArgMindMap();
 
     void openMindMap();
@@ -71,19 +75,29 @@ private:
 
     void saveMindMapAs();
 
+<<<<<<< HEAD
     void saveRecentImagePath(QString fileName);
 
     void saveRecentPath(QString fileName);
 
+=======
+>>>>>>> upstream/master
     void showBackgroundColorDialog();
 
     void showEdgeColorDialog();
 
+<<<<<<< HEAD
+=======
+    void showGridColorDialog();
+
+>>>>>>> upstream/master
     void showImageFileDialog();
 
     void showLayoutOptimizationDialog();
 
     void showPngExportDialog();
+
+    void showSvgExportDialog();
 
     void showMessageBox(QString message);
 
@@ -101,8 +115,6 @@ private:
 
     QString m_lang;
 
-    QString m_settingsGroup = "Application";
-
     std::unique_ptr<StateMachine> m_stateMachine;
 
     std::unique_ptr<MainWindow> m_mainWindow;
@@ -116,6 +128,8 @@ private:
     Node * m_actionNode = nullptr;
 
     std::unique_ptr<PngExportDialog> m_pngExportDialog;
+
+    std::unique_ptr<SvgExportDialog> m_svgExportDialog;
 };
 
 #endif // APPLICATION_HPP

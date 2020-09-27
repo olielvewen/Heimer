@@ -4,13 +4,19 @@
 TEMPLATE = app
 TARGET = heimer
 
+<<<<<<< HEAD
 DEFINES += VERSION=\\\"1.17.0\\\"
+=======
+DEFINES += VERSION=\\\"1.19.0\\\"
+DEFINES += PACKAGE_TYPE=\\\"$$(PACKAGE_TYPE)\\\"
+
+>>>>>>> upstream/master
 CONFIG += c++14 lrelease embed_translations
 
 # Qt version check
 contains(QT_VERSION, ^5\\..*) {
     message("Building for Qt version $${QT_VERSION}.")
-    QT += widgets xml
+    QT += widgets svg xml
 } else {
     error("Qt5 is required!")
 }
@@ -22,6 +28,10 @@ INCLUDEPATH += . $$SRC/contrib/SimpleLogger/src $$SRC/contrib/Argengine/src
 # Input
 HEADERS +=  \
     $$SRC/about_dlg.hpp \
+<<<<<<< HEAD
+=======
+    $$SRC/alz_serializer.hpp \
+>>>>>>> upstream/master
     $$SRC/application.hpp \
     $$SRC/copy_paste.hpp \
     $$SRC/graph.hpp \
@@ -51,6 +61,7 @@ HEADERS +=  \
     $$SRC/mouse_action.hpp \
     $$SRC/node.hpp \
     $$SRC/node_handle.hpp \
+<<<<<<< HEAD
     $$SRC/reader.hpp \
     $$SRC/recent_files_manager.hpp \
     $$SRC/recent_files_menu.hpp \
@@ -61,11 +72,29 @@ HEADERS +=  \
     $$SRC/undo_stack.hpp \
     $$SRC/whats_new_dlg.hpp \
     $$SRC/writer.hpp \
+=======
+    $$SRC/recent_files_manager.hpp \
+    $$SRC/recent_files_menu.hpp \
+    $$SRC/selection_group.hpp \
+    $$SRC/settings.hpp \
+    $$SRC/state_machine.hpp \
+    $$SRC/svg_export_dialog.hpp \
+    $$SRC/test_mode.hpp \
+    $$SRC/text_edit.hpp \
+    $$SRC/undo_stack.hpp \
+    $$SRC/whats_new_dlg.hpp \
+    $$SRC/xml_reader.hpp \
+    $$SRC/xml_writer.hpp \
+>>>>>>> upstream/master
     $$SRC/contrib/Argengine/src/argengine.hpp \
     $$SRC/contrib/SimpleLogger/src/simple_logger.hpp \
 
 SOURCES += \
     $$SRC/about_dlg.cpp \
+<<<<<<< HEAD
+=======
+    $$SRC/alz_serializer.cpp \
+>>>>>>> upstream/master
     $$SRC/application.cpp \
     $$SRC/copy_paste.cpp \
     $$SRC/graph.cpp \
@@ -94,6 +123,7 @@ SOURCES += \
     $$SRC/mouse_action.cpp \
     $$SRC/node.cpp \
     $$SRC/node_handle.cpp \
+<<<<<<< HEAD
     $$SRC/reader.cpp \
     $$SRC/recent_files_manager.cpp \
     $$SRC/recent_files_menu.cpp \
@@ -104,16 +134,40 @@ SOURCES += \
     $$SRC/undo_stack.cpp \
     $$SRC/whats_new_dlg.cpp \
     $$SRC/writer.cpp \
+=======
+    $$SRC/recent_files_manager.cpp \
+    $$SRC/recent_files_menu.cpp \
+    $$SRC/selection_group.cpp \
+    $$SRC/settings.cpp \
+    $$SRC/state_machine.cpp \
+    $$SRC/svg_export_dialog.cpp \
+    $$SRC/test_mode.cpp \
+    $$SRC/text_edit.cpp \
+    $$SRC/undo_stack.cpp \
+    $$SRC/whats_new_dlg.cpp \
+    $$SRC/xml_reader.cpp \
+    $$SRC/xml_writer.cpp \
+>>>>>>> upstream/master
     $$SRC/contrib/Argengine/src/argengine.cpp \
     $$SRC/contrib/SimpleLogger/src/simple_logger.cpp \
 
 QM_FILES_RESOURCE_PREFIX = /translations
+<<<<<<< HEAD
 
 TRANSLATIONS += \ 
 $$SRC/translations/heimer_fi.ts \ 
 $$SRC/translations/heimer_fr.ts \ 
 $$SRC/translations/heimer_it.ts 
 
+=======
+
+TRANSLATIONS += \ 
+$$SRC/translations/heimer_fi.ts \ 
+$$SRC/translations/heimer_fr.ts \ 
+$$SRC/translations/heimer_it.ts \
+$$SRC/translations/heimer_nl.ts 
+
+>>>>>>> upstream/master
 RESOURCES += meta.qrc data/icons/icons.qrc data/images/images.qrc
 RC_FILE = data/icons/WindowsHeimer.rc
 

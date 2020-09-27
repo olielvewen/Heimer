@@ -57,7 +57,11 @@ std::pair<Image, bool> ImageManager::getImage(size_t id)
     if (m_images.count(id)) {
         return { m_images[id], true };
     }
+<<<<<<< HEAD
     return { {}, false };
+=======
+    return {};
+>>>>>>> upstream/master
 }
 
 void ImageManager::handleImageRequest(size_t id, Node & node)

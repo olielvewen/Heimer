@@ -1,5 +1,5 @@
 // This file is part of Heimer.
-// Copyright (C) 2018 Jussi Lind <jussi.lind@iki.fi>
+// Copyright (C) 2020 Jussi Lind <jussi.lind@iki.fi>
 //
 // Heimer is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -13,17 +13,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Heimer. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef READER_HPP
-#define READER_HPP
+#ifndef SETTINGS_HPP
+#define SETTINGS_HPP
 
-#include <QDomDocument>
+#include <QSize>
 
-#include "file_exception.hpp"
+namespace Settings {
 
-namespace Reader {
+int loadGridSize();
 
-QDomDocument readFromFile(QString filePath);
+void saveGridSize(int value);
 
-}
+Qt::CheckState loadGridVisibleState();
 
-#endif // READER_HPP
+void saveGridVisibleState(int state);
+
+QString loadRecentPath();
+
+void saveRecentPath(QString path);
+
+QString loadRecentImagePath();
+
+void saveRecentImagePath(QString path);
+
+QSize loadWindowSize(QSize defaultSize);
+
+void saveWindowSize(QSize size);
+
+bool loadFullScreen();
+
+void saveFullScreen(bool fullScreen);
+
+} // namespace Settings
+
+#endif // SETTINGS_HPP

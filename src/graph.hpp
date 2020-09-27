@@ -51,9 +51,12 @@ public:
 
     bool areDirectlyConnected(NodePtr node0, NodePtr node1);
 
+<<<<<<< HEAD
 #ifdef HEIMER_UNIT_TEST
     void addEdge(int node0, int node1);
 #endif
+=======
+>>>>>>> upstream/master
     size_t numNodes() const;
 
     EdgeVector getEdgesFromNode(NodePtr node);

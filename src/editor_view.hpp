@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Heimer. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EDITORVIEW_HPP
-#define EDITORVIEW_HPP
+#ifndef EDITOR_VIEW_HPP
+#define EDITOR_VIEW_HPP
 
 #include "copy_paste.hpp"
 #include "grid.hpp"
@@ -65,10 +65,20 @@ public slots:
 
     void setEdgeColor(const QColor & edgeColor);
 
+<<<<<<< HEAD:src/editor_view.hpp
+=======
+    void setGridColor(const QColor & edgeColor);
+
+>>>>>>> upstream/master:src/editorview.hpp
     void setEdgeWidth(double edgeWidth);
 
     void setGridSize(int size);
 
+<<<<<<< HEAD:src/editor_view.hpp
+=======
+    void setGridVisible(bool visible);
+
+>>>>>>> upstream/master:src/editorview.hpp
 protected:
     void mouseMoveEvent(QMouseEvent * event) override;
 
@@ -85,11 +95,19 @@ signals:
     void newNodeRequested(QPointF position);
 
 private slots:
+<<<<<<< HEAD:src/editor_view.hpp
 
     void openNodeColorDialog();
 
     void openNodeTextColorDialog();
 
+=======
+
+    void openNodeColorDialog();
+
+    void openNodeTextColorDialog();
+
+>>>>>>> upstream/master:src/editorview.hpp
 private:
     void finishRubberBand();
 
@@ -112,6 +130,7 @@ private:
     void initiateNewNodeDrag(NodeHandle & nodeHandle);
 
     void initiateNodeDrag(Node & node);
+<<<<<<< HEAD:src/editor_view.hpp
 
     void initiateRubberBand();
 
@@ -132,6 +151,30 @@ private:
     void updateScale(int value);
 
     void updateRubberBand();
+=======
+
+    void initiateRubberBand();
+
+    bool isControlPressed() const;
+
+    void openBackgroundContextMenu();
+
+    void openEdgeContextMenu();
+
+    void openMainContextMenu(MainContextMenu::Mode mode);
+
+    void removeNodeFromSelectionGroup(Node & node);
+
+    void showDummyDragEdge(bool show);
+
+    void showDummyDragNode(bool show);
+
+    void updateScale(int value);
+
+    void updateRubberBand();
+
+    void drawBackground(QPainter * painter, const QRectF & rect) override;
+>>>>>>> upstream/master:src/editorview.hpp
 
     Grid m_grid;
 
@@ -156,9 +199,15 @@ private:
     Mediator & m_mediator;
 
     CopyPaste m_copyPaste;
+<<<<<<< HEAD:src/editor_view.hpp
 
     std::unique_ptr<Node> m_dummyDragNode;
 
+=======
+
+    std::unique_ptr<Node> m_dummyDragNode;
+
+>>>>>>> upstream/master:src/editorview.hpp
     std::unique_ptr<Edge> m_dummyDragEdge;
 
     std::shared_ptr<Node> m_connectionTargetNode;
@@ -177,6 +226,11 @@ private:
     EdgeContextMenu * m_edgeContextMenu;
 
     MainContextMenu * m_mainContextMenu;
+<<<<<<< HEAD:src/editor_view.hpp
+=======
+
+    bool m_gridVisible = false;
+>>>>>>> upstream/master:src/editorview.hpp
 };
 
-#endif // EDITORVIEW_HPP
+#endif // EDITOR_VIEW_HPP

@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Heimer. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef EDITORDATA_HPP
-#define EDITORDATA_HPP
+#ifndef EDITOR_DATA_HPP
+#define EDITOR_DATA_HPP
 
 #include <memory>
 #include <set>
@@ -23,6 +23,7 @@
 #include <QObject>
 #include <QPointF>
 #include <QString>
+#include <QTimer>
 
 #include "edge.hpp"
 #include "file_exception.hpp"
@@ -88,7 +89,7 @@ public:
 
     bool saveMindMapAs(QString fileName);
 
-    void saveUndoPoint();
+    void saveUndoPoint(bool dontClearRedoStack = false);
 
     void saveRedoPoint();
 
@@ -114,11 +115,18 @@ signals:
 
     void undoEnabled(bool enable);
 
+<<<<<<< HEAD:src/editor_data.hpp
+=======
+    void redoEnabled(bool enable);
+
+>>>>>>> upstream/master:src/editordata.hpp
 private:
     EditorData(const EditorData & e) = delete;
     EditorData & operator=(const EditorData & e) = delete;
 
     void removeNodesFromScene();
+
+    void sendUndoAndRedoSignals();
 
     void setIsModified(bool isModified);
 
@@ -145,6 +153,8 @@ private:
     bool m_isModified = false;
 
     QString m_fileName;
+
+    QTimer m_undoTimer;
 };
 
-#endif // EDITORDATA_HPP
+#endif // EDITOR_DATA_HPP

@@ -15,12 +15,23 @@
 
 #include "editor_data_test.hpp"
 
+<<<<<<< HEAD
 #include "editor_data.hpp"
 #include "mind_map_data.hpp"
 #include "serializer.hpp"
 
 EditorDataTest::EditorDataTest()
 {
+=======
+#include "alz_serializer.hpp"
+#include "editor_data.hpp"
+#include "mind_map_data.hpp"
+#include "test_mode.hpp"
+
+EditorDataTest::EditorDataTest()
+{
+    TestMode::setEnabled(true);
+>>>>>>> upstream/master
 }
 
 void EditorDataTest::testGroupMove()
@@ -652,6 +663,14 @@ void EditorDataTest::testRedoState()
     QCOMPARE(editorData.selectionGroupSize(), size_t(0));
     QCOMPARE(editorData.selectedEdge(), nullptr);
     QCOMPARE(editorData.selectedNode(), nullptr);
+<<<<<<< HEAD
+=======
+
+    editorData.undo();
+    editorData.saveUndoPoint();
+
+    QCOMPARE(editorData.isRedoable(), false);
+>>>>>>> upstream/master
 }
 
 void EditorDataTest::testUndoStackResetOnNewDesign()
